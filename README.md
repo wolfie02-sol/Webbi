@@ -32,5 +32,16 @@ Then open http://localhost:8000.
 
 ## Deploy
 
+### Hostinger
+
+Upload `index.html`, `.htaccess`, `css/`, `js/` and `assets/` into `public_html` (hPanel → File Manager),
+with `index.html` directly inside `public_html`. Then install the free SSL certificate (hPanel → Security → SSL).
+`.htaccess` forces HTTPS, compresses files, sets browser caching and adds basic security headers.
+
+When you change `css/styles.css` or a file in `js/`, raise the `?v=1` number on its link in `index.html`
+(for example to `?v=2`) so returning visitors get the new version right away.
+
+### Other hosts
+
 Any static host works (GitHub Pages, Netlify, Vercel, Cloudflare Pages). On GitHub Pages:
 Settings → Pages → Deploy from branch → select the branch and `/ (root)`.
