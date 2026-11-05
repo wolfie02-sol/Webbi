@@ -9,7 +9,7 @@ window.WEBBI_I18N = {
     "cta.book": "Book a call", "cta.free": "Book a free call", "cta.packages": "See packages",
 
     "hero.eyebrow": "Web design studio · Montreal",
-    "hero.title": "Websites that <em>work</em> as hard as you do.",
+    "hero.title": "Websites that work as hard as you do.",
     "hero.lead": "Custom websites that are fast, sharp and built for mobile and desktop. Designed, built and launched in under a week.",
     "fact.from": "From", "fact.live": "Live in", "fact.days": "< 7 days", "fact.call": "Free call", "fact.min": "20 min",
     "ticker": "Build progress", "ticker.live": "Live", "ticker.day": "Day",
@@ -99,7 +99,7 @@ window.WEBBI_I18N = {
     "cta.book": "Réserver un appel", "cta.free": "Appel gratuit", "cta.packages": "Voir les forfaits",
 
     "hero.eyebrow": "Studio de conception Web · Montréal",
-    "hero.title": "Des sites Web qui <em>travaillent</em> aussi fort que vous.",
+    "hero.title": "Des sites Web qui travaillent aussi fort que vous.",
     "hero.lead": "Des sites sur mesure, rapides et soignés, pour mobile et ordinateur. Conçus, réalisés et lancés en moins d'une semaine.",
     "fact.from": "À partir de", "fact.live": "En ligne en", "fact.days": "< 7 jours", "fact.call": "Appel gratuit", "fact.min": "20 min",
     "ticker": "Progression", "ticker.live": "En ligne", "ticker.day": "Jour",
