@@ -26,9 +26,9 @@ Files you edit:
 - `js/main.js`: price view (monthly / first-year total), build animation, swipe between pages on phones, contact form
 - `site.config.json`: your website address (`siteUrl`, for example `"https://webbi.ca"`) and default language
 - `contact.php`: emails contact form requests to webbicontacts@gmail.com (spam trap and rate limit included)
-- `demos/`: three concept sites for fictional businesses, shown on the home page (plain HTML, edit directly)
+- `demos/`: three simple example sites for fictional businesses, shown on the home page (plain HTML, edit directly)
 - `assets/`: logos, browser icons (`favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`), share images
-  (`og-fr.png`, `og-en.png`) and concept site thumbnails (`assets/demos/`)
+  (`og-fr.png`, `og-en.png`) and example site thumbnails (`assets/demos/`)
 
 Generated files (do not edit by hand): `index.html`, `404.html`, `fr/`, `en/`, `robots.txt`, and `sitemap.xml` once `siteUrl` is set.
 
