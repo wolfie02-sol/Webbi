@@ -11,6 +11,10 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # RewriteRule ^(.*)$ https://%1%{REQUEST_URI} [L,R=301]
 
 DirectoryIndex index.html
+
+# Build files are not part of the website
+RedirectMatch 404 ^/(src|scripts)(/|$)
+
 Options -Indexes
 
 # Compress text files
@@ -40,6 +44,6 @@ Options -Indexes
 </IfModule>
 
 # Hide repo files if the whole folder is uploaded
-<FilesMatch "^(README\.md|\.git.*)$">
+<FilesMatch "^(README\.md|site\.config\.json|\.git.*)$">
   Require all denied
 </FilesMatch>

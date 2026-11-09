@@ -3,71 +3,39 @@
 
   var DICT = window.WEBBI_I18N || {};
   var root = document.documentElement;
-  var state = { lang: "en", view: "month" };
+  var state = {
+    lang: /^fr/i.test(root.lang) ? "fr" : "en",
+    page: document.body.getAttribute("data-page") || "home",
+    view: "month"
+  };
 
-  /* ---------- storage helpers (never required) ---------- */
+  /* ---------- helpers ---------- */
   function load(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
   function save(key, val) { try { localStorage.setItem(key, val); } catch (e) { /* ignore */ } }
-
   function t(key) {
     var d = DICT[state.lang] || {};
     return d[key] != null ? d[key] : (DICT.en && DICT.en[key]) || "";
   }
   function fill(str, vars) { return str.replace(/\{(\w+)\}/g, function (_, k) { return vars[k]; }); }
-
+  function fmt(n) { return Math.round(n).toLocaleString(state.lang === "fr" ? "fr-CA" : "en-CA"); }
   /* CAD money, local convention: EN "$1,788", FR "1 788 $" */
-  function money(n) {
-    var s = Math.round(n).toLocaleString(state.lang === "fr" ? "fr-CA" : "en-CA");
-    return state.lang === "fr" ? s + " $" : "$" + s;
-  }
-
-  /* EN "$2,388–3,108", FR "2 388–3 108 $" */
+  function money(n) { return state.lang === "fr" ? fmt(n) + " $" : "$" + fmt(n); }
   function moneyRange(lo, hi) {
-    var loc = state.lang === "fr" ? "fr-CA" : "en-CA";
-    var a = Math.round(lo).toLocaleString(loc), b = Math.round(hi).toLocaleString(loc);
-    return state.lang === "fr" ? a + "–" + b + " $" : "$" + a + "–" + b;
+    return state.lang === "fr" ? fmt(lo) + "–" + fmt(hi) + " $" : "$" + fmt(lo) + "–" + fmt(hi);
   }
 
-  /* ---------- language ---------- */
-  function initialLang() {
-    var q = new URLSearchParams(location.search).get("lang");
-    if (q === "fr" || q === "en") return q;
-    var saved = load("webbi-lang");
-    if (saved === "fr" || saved === "en") return saved;
-    var nav = (navigator.languages && navigator.languages[0]) || navigator.language || "en";
-    return /^fr/i.test(nav) ? "fr" : "en";
-  }
+  /* ---------- language: remember the visitor's choice for the home address ---------- */
+  save("webbi-lang", state.lang);
+  document.querySelectorAll(".lang a[data-lang]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      save("webbi-lang", a.getAttribute("data-lang"));
+      // keep the visitor on the same section of the page in the other language
+      if (location.hash) a.href = a.href.split("#")[0] + location.hash;
+    });
+  });
 
-  function applyLang(lang) {
-    state.lang = lang;
-    root.lang = lang === "fr" ? "fr-CA" : "en-CA";
-    document.querySelectorAll("[data-i18n]").forEach(function (el) {
-      var v = t(el.getAttribute("data-i18n"));
-      if (v) el.textContent = v;
-    });
-    document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
-      var v = t(el.getAttribute("data-i18n-html"));
-      if (v) el.innerHTML = v;
-    });
-    document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
-      el.setAttribute("aria-label", t(el.getAttribute("data-i18n-aria")));
-    });
-    document.querySelectorAll("[data-lang]").forEach(function (b) {
-      b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang));
-    });
-    if (pages.length) { buildPagers(); updateTitle(); } else document.title = t("meta.title");
-    var md = document.querySelector('meta[name="description"]');
-    if (md) md.setAttribute("content", t("meta.desc"));
-    renderPrices();
-    renderTicker();
-  }
-
-  /* ---------- prices ---------- */
-  function renderPrices() {
-    document.querySelectorAll("[data-price]").forEach(function (el) {
-      if (el.closest(".plan")) return; // plans are rendered below
-      el.textContent = money(+el.getAttribute("data-price"));
-    });
+  /* ---------- pricing: monthly vs first-year total ---------- */
+  function renderPrices(animate) {
     document.querySelectorAll(".plan").forEach(function (plan) {
       var then = plan.querySelector(".plan-then");
       var amt = plan.querySelector(".amt");
@@ -77,7 +45,7 @@
         var lo = setup + 12 * min, hi = setup + 12 * max;
         amt.textContent = range ? moneyRange(lo, hi) : money(lo);
         var fee = range ? moneyRange(min, max) : money(min);
-        then.innerHTML = "";
+        then.textContent = "";
         var yr = document.createElement("span");
         yr.className = "yr";
         yr.textContent = fill(t("year.calc"), { setup: money(setup), fee: fee });
@@ -86,34 +54,34 @@
         amt.textContent = money(setup);
         then.textContent = t("then") + " " + (range ? money(min) + " " + t("to") + " " + money(max) : money(min)) + " " + t("permonth");
       }
-      amt.classList.remove("flip"); void amt.offsetWidth; amt.classList.add("flip");
+      if (animate) { amt.classList.remove("flip"); void amt.offsetWidth; amt.classList.add("flip"); }
     });
     document.querySelectorAll("[data-view]").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.getAttribute("data-view") === state.view));
     });
   }
+  document.querySelectorAll("[data-view]").forEach(function (b) {
+    b.addEventListener("click", function () { state.view = b.getAttribute("data-view"); renderPrices(true); });
+  });
 
   /* ---------- hero build ticker: days 1→7 then "Live" ---------- */
-  var tick = { day: 0, timer: null };
-  var daysEl = document.getElementById("days");
-  var stateEl = document.getElementById("ticker-state");
-  function renderTicker() {
-    if (!daysEl) return;
-    var spans = daysEl.children;
-    for (var i = 0; i < spans.length; i++) spans[i].classList.toggle("on", i < tick.day);
-    stateEl.textContent = tick.day >= 7 || tick.day === 0 ? t("ticker.live") : t("ticker.day") + " " + tick.day;
-  }
   function runTicker() {
-    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { tick.day = 7; renderTicker(); return; }
-    tick.day = 0; renderTicker();
-    var step = function () {
-      tick.day++;
-      renderTicker();
-      if (tick.day < 7) tick.timer = setTimeout(step, 380);
-      else tick.timer = setTimeout(function () { tick.day = 0; renderTicker(); tick.timer = setTimeout(step, 900); }, 4200);
-    };
-    tick.timer = setTimeout(step, 1600);
+    var daysEl = document.getElementById("days");
+    var stateEl = document.getElementById("ticker-state");
+    if (!daysEl) return;
+    var day = 0;
+    function render() {
+      for (var i = 0; i < daysEl.children.length; i++) daysEl.children[i].classList.toggle("on", i < day);
+      stateEl.textContent = day >= 7 || day === 0 ? t("ticker.live") : t("ticker.day") + " " + day;
+    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { day = 7; render(); return; }
+    function step() {
+      day++; render();
+      if (day < 7) setTimeout(step, 380);
+      else setTimeout(function () { day = 0; render(); setTimeout(step, 900); }, 4200);
+    }
+    render();
+    setTimeout(step, 1600);
   }
 
   /* ---------- subtle parallax on the hero stage ---------- */
@@ -131,103 +99,48 @@
     stage.addEventListener("pointerleave", function () { browser.style.transform = phone.style.transform = ""; });
   }
 
-  /* ---------- header, menu, active nav ---------- */
+  /* ---------- header ---------- */
   function initHeader() {
     var top = document.getElementById("top");
     var onScroll = function () { top.classList.toggle("is-scrolled", window.scrollY > 8); };
     window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
 
-  }
-
-  /* on narrow screens the menu is a sideways-scrolling tab row: keep the current tab in view */
-  function centerTab(a) {
+    // on narrow screens the menu is a tab row that may scroll sideways: keep the current tab in view
     var nav = document.getElementById("nav");
-    if (nav.scrollWidth <= nav.clientWidth) return;
-    var left = a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2;
-    nav.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
-  }
-
-  /* ---------- pages: one section at a time, driven by the menu and the URL hash ---------- */
-  var pages = Array.prototype.slice.call(document.querySelectorAll("[data-page]"));
-  var pageIds = pages.map(function (p) { return p.id; });
-  var current = null;
-
-  function pageLabel(id) {
-    var link = document.querySelector('#nav a[href="#' + id + '"]');
-    return link ? link.textContent : id;
-  }
-
-  function buildPagers() {
-    pages.forEach(function (page, i) {
-      var pager = page.querySelector(".pager");
-      if (!pager) {
-        pager = document.createElement("nav");
-        pager.className = "pager wrap";
-        page.appendChild(pager);
-      }
-      pager.setAttribute("aria-label", t("pager.prev") + " / " + t("pager.next"));
-      pager.innerHTML = "";
-      [[i - 1, "prev", "←"], [i + 1, "next", "→"]].forEach(function (d) {
-        var target = pages[d[0]];
-        if (!target) { pager.appendChild(document.createElement("span")); return; }
-        var a = document.createElement("a");
-        a.href = "#" + target.id;
-        a.className = "pager-link pager-" + d[1];
-        var small = document.createElement("small");
-        small.textContent = (d[1] === "prev" ? d[2] + " " : "") + t("pager." + d[1]) + (d[1] === "next" ? " " + d[2] : "");
-        var b = document.createElement("b");
-        b.textContent = pageLabel(target.id);
-        a.append(small, b);
-        pager.appendChild(a);
-      });
-    });
-  }
-
-  function idFromHash() {
-    var id = decodeURIComponent(location.hash.slice(1));
-    if (pageIds.indexOf(id) !== -1) return id;
-    // a hash pointing inside a page (e.g. #why) opens that page
-    var el = id && document.getElementById(id);
-    var holder = el && el.closest && el.closest("[data-page]");
-    return holder ? holder.id : "home";
-  }
-
-  function showPage(id, moveFocus) {
-    if (id === current) return;
-    current = id;
-    pages.forEach(function (p) {
-      var on = p.id === id;
-      p.hidden = !on;
-      p.classList.toggle("is-active", on);
-    });
-    document.querySelectorAll("#nav a").forEach(function (a) {
-      var on = a.getAttribute("href") === "#" + id;
-      a.classList.toggle("is-active", on);
-      if (on) { a.setAttribute("aria-current", "page"); centerTab(a); } else a.removeAttribute("aria-current");
-    });
-    updateTitle();
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    if (moveFocus) {
-      var h = document.getElementById(id).querySelector("h1, h2");
-      if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+    var cur = nav && nav.querySelector('[aria-current="page"]');
+    if (cur && nav.scrollWidth > nav.clientWidth) {
+      nav.scrollLeft = cur.offsetLeft - (nav.clientWidth - cur.offsetWidth) / 2;
     }
   }
 
-  function updateTitle() {
-    document.title = !current || current === "home" ? t("meta.title") : pageLabel(current) + " · Webbi";
-  }
-
-  function initPages() {
-    buildPagers();
-    showPage(idFromHash(), false);
-    window.addEventListener("hashchange", function () { showPage(idFromHash(), true); });
+  /* ---------- swipe left/right on phones to go to the next/previous page ---------- */
+  function initSwipe() {
+    var next = document.querySelector('.pager a[rel="next"]');
+    var prev = document.querySelector('.pager a[rel="prev"]');
+    if (!next && !prev) return;
+    var x0 = null, y0 = 0, t0 = 0;
+    var ignore = "input, textarea, select, button, .nav, .seg, .stage, .faq summary";
+    document.addEventListener("touchstart", function (e) {
+      if (e.touches.length !== 1 || e.target.closest(ignore)) { x0 = null; return; }
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+    }, { passive: true });
+    document.addEventListener("touchend", function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Date.now() - t0 > 700 || Math.abs(dx) < 80 || Math.abs(dx) < Math.abs(dy) * 2) return;
+      var target = dx < 0 ? next : prev;
+      if (target) location.href = target.href;
+    }, { passive: true });
   }
 
   /* ---------- theme ---------- */
   function initTheme() {
     var saved = load("webbi-theme");
     if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
-    document.getElementById("theme-toggle").addEventListener("click", function () {
+    var btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    btn.addEventListener("click", function () {
       var cur = root.getAttribute("data-theme") ||
         (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
       var next = cur === "dark" ? "light" : "dark";
@@ -240,7 +153,6 @@
   function initCopy() {
     document.querySelectorAll("[data-copy]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        var text = btn.getAttribute("data-copy");
         var done = function () {
           btn.textContent = t("copied");
           setTimeout(function () { btn.textContent = t("copy"); }, 1600);
@@ -251,7 +163,7 @@
           var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
         };
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(done, fallback);
+          navigator.clipboard.writeText(btn.getAttribute("data-copy")).then(done, fallback);
         } else fallback();
       });
     });
@@ -260,12 +172,13 @@
   /* ---------- contact form → prefilled email ---------- */
   function initForm() {
     var form = document.getElementById("contact-form");
+    if (!form) return;
     var status = document.getElementById("form-status");
     var plan = document.getElementById("f-plan");
 
-    document.querySelectorAll("[data-plan]").forEach(function (a) {
-      a.addEventListener("click", function () { plan.value = a.getAttribute("data-plan"); });
-    });
+    // "Choose Growth" etc. link here with ?plan=growth
+    var wanted = new URLSearchParams(location.search).get("plan");
+    if (wanted && plan.querySelector('option[value="' + wanted.replace(/[^a-z]/g, "") + '"]')) plan.value = wanted;
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -298,27 +211,14 @@
     });
   }
 
-  /* ---------- boot ---------- */
-  document.querySelectorAll("[data-lang]").forEach(function (b) {
-    b.addEventListener("click", function () {
-      var l = b.getAttribute("data-lang");
-      save("webbi-lang", l);
-      applyLang(l);
-    });
-  });
-  document.querySelectorAll("[data-view]").forEach(function (b) {
-    b.addEventListener("click", function () { state.view = b.getAttribute("data-view"); renderPrices(); });
-  });
-
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   initTheme();
-  applyLang(initialLang());
   runTicker();
   initTilt();
   initHeader();
-  initPages();
+  initSwipe();
   initCopy();
   initForm();
 })();
