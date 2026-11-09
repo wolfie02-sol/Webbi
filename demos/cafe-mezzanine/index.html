@@ -121,5 +121,18 @@
     document.getElementById("open-now").lastChild.textContent = "Ouvert aujourd'hui · " + row.lastElementChild.textContent;
   }
 </script>
+<script>
+  /* open at the top of the page when arriving from a link (also inside previews that show the site in a frame) */
+  (function () {
+    var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+    if (location.hash || (nav && nav.type === "back_forward")) return;
+    function top() {
+      window.scrollTo(0, 0);
+      try { document.body.scrollIntoView({ block: "start" }); } catch (e) {}
+    }
+    top();
+    window.addEventListener("load", top);
+  })();
+</script>
 </body>
 </html>

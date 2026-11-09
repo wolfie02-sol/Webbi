@@ -304,6 +304,20 @@
     show(0);
   }
 
+  /* ---------- open at the top when arriving from a link ----------
+     Browsers do this already; previews that show the site inside a frame can keep the old scroll position. */
+  function startAtTop() {
+    var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+    if (location.hash || (nav && nav.type === "back_forward")) return;
+    var go = function () {
+      window.scrollTo(0, 0);
+      try { document.body.scrollIntoView({ block: "start" }); } catch (e) { /* ignore */ }
+    };
+    go();
+    window.addEventListener("load", go);
+  }
+  startAtTop();
+
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
