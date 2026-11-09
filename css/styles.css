@@ -134,24 +134,29 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   display: inline-grid; place-items: center; cursor: pointer;
 }
 .icon-btn:hover { border-color: var(--ink); }
-.menu-btn { display: none; gap: 5px; align-content: center; }
-.menu-btn span { display: block; width: 16px; height: 2px; background: currentColor; border-radius: 2px; transition: transform .2s; }
-.menu-btn[aria-expanded="true"] span:first-child { transform: translateY(3.5px) rotate(45deg); }
-.menu-btn[aria-expanded="true"] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
 
 @media (max-width: 1240px) { .hide-sm { display: none; } }
+/* narrower screens: the menu stays visible as a second row of tabs under the logo */
 @media (max-width: 1060px) {
-  .menu-btn { display: inline-grid; }
+  :root { --header-h: 118px; }
+  .top-row { flex-wrap: wrap; height: auto; column-gap: 12px; row-gap: 0; padding-top: 10px; }
+  .brand .logo { height: 32px; }
   .top-actions { margin-left: auto; }
   .nav {
-    position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; gap: 0; margin: 0;
-    background: var(--bg); border-bottom: 1px solid var(--line);
-    padding: 8px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px));
-    display: none;
+    order: 3; flex: 0 0 100%; margin: 0; gap: 8px; position: relative;
+    overflow-x: auto; scrollbar-width: none; padding-block: 10px 12px;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
   }
-  .nav.is-open { display: flex; }
-  .nav a { padding: 14px 4px; font-size: var(--s-md); border-bottom: 1px solid var(--line); }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a {
+    flex: none; white-space: nowrap; padding: 8px 15px; border: 1.5px solid var(--line); border-radius: 999px;
+    font-size: var(--s-sm); color: var(--ink); transition: background-color .2s, border-color .2s, color .2s;
+  }
+  .nav a:last-child { margin-right: 28px; }
   .nav a::after { display: none; }
+  .nav a:hover { border-color: var(--ink); }
+  .top .nav a[aria-current="page"] { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
 }
 
 /* ---------- pages (one visible at a time) ---------- */

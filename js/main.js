@@ -137,16 +137,14 @@
     var onScroll = function () { top.classList.toggle("is-scrolled", window.scrollY > 8); };
     window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
 
-    var btn = document.getElementById("menu-btn"), nav = document.getElementById("nav");
-    btn.addEventListener("click", function () {
-      var open = btn.getAttribute("aria-expanded") !== "true";
-      btn.setAttribute("aria-expanded", String(open));
-      nav.classList.toggle("is-open", open);
-    });
-    nav.addEventListener("click", function (e) {
-      if (e.target.closest("a")) { btn.setAttribute("aria-expanded", "false"); nav.classList.remove("is-open"); }
-    });
+  }
 
+  /* on narrow screens the menu is a sideways-scrolling tab row: keep the current tab in view */
+  function centerTab(a) {
+    var nav = document.getElementById("nav");
+    if (nav.scrollWidth <= nav.clientWidth) return;
+    var left = a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2;
+    nav.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
   }
 
   /* ---------- pages: one section at a time, driven by the menu and the URL hash ---------- */
@@ -205,7 +203,7 @@
     document.querySelectorAll("#nav a").forEach(function (a) {
       var on = a.getAttribute("href") === "#" + id;
       a.classList.toggle("is-active", on);
-      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      if (on) { a.setAttribute("aria-current", "page"); centerTab(a); } else a.removeAttribute("aria-current");
     });
     updateTitle();
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
