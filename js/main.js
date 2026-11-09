@@ -55,7 +55,7 @@
     document.querySelectorAll("[data-lang]").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang));
     });
-    document.title = t("meta.title");
+    if (pages.length) { buildPagers(); updateTitle(); } else document.title = t("meta.title");
     var md = document.querySelector('meta[name="description"]');
     if (md) md.setAttribute("content", t("meta.desc"));
     renderPrices();
@@ -147,17 +147,82 @@
       if (e.target.closest("a")) { btn.setAttribute("aria-expanded", "false"); nav.classList.remove("is-open"); }
     });
 
-    if (!("IntersectionObserver" in window)) return;
-    var links = {};
-    nav.querySelectorAll("a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting && links[en.target.id]) {
-          Object.keys(links).forEach(function (k) { links[k].classList.toggle("is-active", k === en.target.id); });
-        }
+  }
+
+  /* ---------- pages: one section at a time, driven by the menu and the URL hash ---------- */
+  var pages = Array.prototype.slice.call(document.querySelectorAll("[data-page]"));
+  var pageIds = pages.map(function (p) { return p.id; });
+  var current = null;
+
+  function pageLabel(id) {
+    var link = document.querySelector('#nav a[href="#' + id + '"]');
+    return link ? link.textContent : id;
+  }
+
+  function buildPagers() {
+    pages.forEach(function (page, i) {
+      var pager = page.querySelector(".pager");
+      if (!pager) {
+        pager = document.createElement("nav");
+        pager.className = "pager wrap";
+        page.appendChild(pager);
+      }
+      pager.setAttribute("aria-label", t("pager.prev") + " / " + t("pager.next"));
+      pager.innerHTML = "";
+      [[i - 1, "prev", "←"], [i + 1, "next", "→"]].forEach(function (d) {
+        var target = pages[d[0]];
+        if (!target) { pager.appendChild(document.createElement("span")); return; }
+        var a = document.createElement("a");
+        a.href = "#" + target.id;
+        a.className = "pager-link pager-" + d[1];
+        var small = document.createElement("small");
+        small.textContent = (d[1] === "prev" ? d[2] + " " : "") + t("pager." + d[1]) + (d[1] === "next" ? " " + d[2] : "");
+        var b = document.createElement("b");
+        b.textContent = pageLabel(target.id);
+        a.append(small, b);
+        pager.appendChild(a);
       });
-    }, { rootMargin: "-45% 0px -50% 0px" });
-    Object.keys(links).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+    });
+  }
+
+  function idFromHash() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    if (pageIds.indexOf(id) !== -1) return id;
+    // a hash pointing inside a page (e.g. #why) opens that page
+    var el = id && document.getElementById(id);
+    var holder = el && el.closest && el.closest("[data-page]");
+    return holder ? holder.id : "home";
+  }
+
+  function showPage(id, moveFocus) {
+    if (id === current) return;
+    current = id;
+    pages.forEach(function (p) {
+      var on = p.id === id;
+      p.hidden = !on;
+      p.classList.toggle("is-active", on);
+    });
+    document.querySelectorAll("#nav a").forEach(function (a) {
+      var on = a.getAttribute("href") === "#" + id;
+      a.classList.toggle("is-active", on);
+      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    updateTitle();
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (moveFocus) {
+      var h = document.getElementById(id).querySelector("h1, h2");
+      if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+    }
+  }
+
+  function updateTitle() {
+    document.title = !current || current === "home" ? t("meta.title") : pageLabel(current) + " · Webbi";
+  }
+
+  function initPages() {
+    buildPagers();
+    showPage(idFromHash(), false);
+    window.addEventListener("hashchange", function () { showPage(idFromHash(), true); });
   }
 
   /* ---------- theme ---------- */
@@ -255,6 +320,7 @@
   runTicker();
   initTilt();
   initHeader();
+  initPages();
   initCopy();
   initForm();
 })();

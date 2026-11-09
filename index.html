@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="css/styles.css?v=1">
+<link rel="stylesheet" href="css/styles.css?v=2">
 </head>
 <body>
 
@@ -22,11 +22,13 @@
 
 <header class="top" id="top">
   <div class="wrap top-row">
-    <a class="brand" href="#main" aria-label="Webbi">
+    <a class="brand" href="#home" aria-label="Webbi">
       <img class="logo logo-on-light" src="assets/webbi-logo.png" alt="Webbi" width="120" height="42">
       <img class="logo logo-on-dark" src="assets/webbi-logo-dark.png" alt="" width="120" height="42" aria-hidden="true">
     </a>
     <nav class="nav" id="nav" aria-label="Main">
+      <a href="#home" data-i18n="nav.home">Home</a>
+      <a href="#about" data-i18n="nav.about">About</a>
       <a href="#services" data-i18n="nav.services">Services</a>
       <a href="#process" data-i18n="nav.process">Process</a>
       <a href="#pricing" data-i18n="nav.pricing">Pricing</a>
@@ -52,6 +54,7 @@
 <main id="main">
 
   <!-- HERO -->
+  <div class="page" id="home" data-page>
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
@@ -119,7 +122,10 @@
     </div>
   </section>
 
-  <!-- WHY -->
+  </div>
+
+  <!-- ABOUT PAGE: why + who we are -->
+  <div class="page" id="about" data-page>
   <section class="section" id="why">
     <div class="wrap split">
       <div class="split-head">
@@ -163,8 +169,11 @@
     </div>
   </section>
 
+  </div>
+
   <!-- SERVICES -->
-  <section class="section" id="services">
+  <div class="page" id="services" data-page>
+  <section class="section">
     <div class="wrap">
       <div class="section-head">
         <p class="kicker" data-i18n="svc.kicker">What we build</p>
@@ -205,8 +214,11 @@
     </div>
   </section>
 
+  </div>
+
   <!-- PROCESS -->
-  <section class="section process" id="process">
+  <div class="page" id="process" data-page>
+  <section class="section process">
     <div class="wrap">
       <div class="section-head">
         <p class="kicker" data-i18n="proc.kicker">Our process</p>
@@ -227,8 +239,11 @@
     </div>
   </section>
 
+  </div>
+
   <!-- PRICING -->
-  <section class="section" id="pricing">
+  <div class="page" id="pricing" data-page>
+  <section class="section">
     <div class="wrap">
       <div class="pricing-head">
         <div class="section-head">
@@ -312,8 +327,11 @@
     </div>
   </section>
 
+  </div>
+
   <!-- FAQ -->
-  <section class="section" id="faq">
+  <div class="page" id="faq" data-page>
+  <section class="section">
     <div class="wrap split">
       <div class="split-head">
         <p class="kicker" data-i18n="faq.kicker">Common questions</p>
@@ -340,8 +358,11 @@
     </div>
   </section>
 
+  </div>
+
   <!-- CONTACT -->
-  <section class="contact" id="contact">
+  <div class="page" id="contact" data-page>
+  <section class="contact">
     <div class="wrap contact-grid">
       <div class="contact-copy">
         <p class="kicker on-brand" data-i18n="contact.kicker">Next step</p>
@@ -405,6 +426,8 @@
     </div>
   </section>
 
+  </div>
+
 </main>
 
 <footer class="footer">
@@ -417,7 +440,7 @@
   </div>
 </footer>
 
-<script src="js/i18n.js?v=1"></script>
-<script src="js/main.js?v=1"></script>
+<script src="js/i18n.js?v=2"></script>
+<script src="js/main.js?v=2"></script>
 </body>
 </html>

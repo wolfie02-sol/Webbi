@@ -5,10 +5,10 @@ Plain HTML, CSS and JavaScript: no build step.
 
 ## Structure
 
-- `index.html`: the page (all sections: hero, why, about, services, process, pricing, FAQ, contact)
+- `index.html`: the site. Each menu section is its own page (`#home`, `#about`, `#services`, `#process`, `#pricing`, `#faq`, `#contact`) and only one shows at a time.
 - `css/styles.css`: design tokens, light and dark themes, responsive layout, animations
 - `js/i18n.js`: every piece of text in English and French. Edit copy here.
-- `js/main.js`: language switch, price view (monthly / first-year total), build animation, contact form
+- `js/main.js`: page switching (menu and previous/next buttons), language switch, price view (monthly / first-year total), build animation, contact form
 - `assets/`: logo (light and dark versions)
 
 ## Language

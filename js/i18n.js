@@ -5,6 +5,7 @@ window.WEBBI_I18N = {
     "meta.desc": "Webbi is a Montreal web design studio. Custom, fast, mobile-first websites for small businesses, live in under a week.",
     "skip": "Skip to content",
     "theme": "Toggle dark mode",
+    "nav.home": "Home", "nav.about": "About", "pager.prev": "Previous", "pager.next": "Next",
     "nav.services": "Services", "nav.process": "Process", "nav.pricing": "Pricing", "nav.faq": "FAQ", "nav.contact": "Contact",
     "cta.book": "Book a call", "cta.free": "Book a free call", "cta.packages": "See packages",
 
@@ -95,6 +96,7 @@ window.WEBBI_I18N = {
     "meta.desc": "Webbi est un studio de conception Web à Montréal. Des sites sur mesure, rapides et pensés pour le mobile, en ligne en moins d'une semaine.",
     "skip": "Aller au contenu",
     "theme": "Activer ou désactiver le mode sombre",
+    "nav.home": "Accueil", "nav.about": "À propos", "pager.prev": "Précédent", "pager.next": "Suivant",
     "nav.services": "Services", "nav.process": "Processus", "nav.pricing": "Tarifs", "nav.faq": "FAQ", "nav.contact": "Contact",
     "cta.book": "Réserver un appel", "cta.free": "Appel gratuit", "cta.packages": "Voir les forfaits",
 
