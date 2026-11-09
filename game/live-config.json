@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "announcements": [
+    { "title": "Welcome to Vael", "body": "Cryptwild is in early access. Your save lives in this browser: export it from Save & Options to keep a backup." }
+  ],
+  "events": [],
+  "crates": {},
+  "rewards": { "paused": true, "legalReviewRef": "" },
+  "solana": {
+    "cluster": "mainnet-beta",
+    "rpcUrl": "https://api.mainnet-beta.solana.com",
+    "treasuryAddress": "",
+    "tokenMint": "",
+    "feeSource": "",
+    "allocation": { "cards": 60, "events": 20, "development": 10, "reserve": 10 }
+  }
+}
