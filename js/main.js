@@ -169,16 +169,37 @@
     });
   }
 
-  /* ---------- contact form → prefilled email ---------- */
+  /* ---------- contact form: sends through contact.php, falls back to the visitor's email app ---------- */
   function initForm() {
     var form = document.getElementById("contact-form");
     if (!form) return;
     var status = document.getElementById("form-status");
     var plan = document.getElementById("f-plan");
+    var submit = document.getElementById("f-submit");
+    var started = document.getElementById("f-t");
+    if (started) started.value = String(Date.now());
 
     // "Choose Growth" etc. link here with ?plan=growth
-    var wanted = new URLSearchParams(location.search).get("plan");
-    if (wanted && plan.querySelector('option[value="' + wanted.replace(/[^a-z]/g, "") + '"]')) plan.value = wanted;
+    var wanted = (new URLSearchParams(location.search).get("plan") || "").replace(/[^a-z]/g, "");
+    if (wanted && plan.querySelector('option[value="' + wanted + '"]')) plan.value = wanted;
+
+    function setStatus(kind, text) { status.className = "form-status " + kind; status.textContent = text; }
+
+    function mailtoFallback(name, email, msg) {
+      var lines = [
+        t("mail.name") + ": " + name,
+        t("mail.email") + ": " + email,
+        t("mail.phone") + ": " + (form.phone.value.trim() || "-"),
+        t("mail.business") + ": " + (form.business.value.trim() || "-"),
+        t("mail.plan") + ": " + plan.options[plan.selectedIndex].text,
+        "",
+        t("mail.msg") + ":",
+        msg
+      ];
+      setStatus("ok", t("form.ok"));
+      window.location.href = "mailto:webbicontacts@gmail.com?subject=" +
+        encodeURIComponent(fill(t("mail.subject"), { name: name })) + "&body=" + encodeURIComponent(lines.join("\n"));
+    }
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -191,24 +212,96 @@
       if (bad.length) {
         bad.forEach(function (el) { el.classList.add("invalid"); });
         bad[0].focus();
-        status.className = "form-status err"; status.textContent = t("form.err");
+        setStatus("err", t("form.err"));
         return;
       }
-      var lines = [
-        t("mail.name") + ": " + name,
-        t("mail.email") + ": " + email,
-        t("mail.phone") + ": " + (form.phone.value.trim() || "-"),
-        t("mail.business") + ": " + (form.business.value.trim() || "-"),
-        t("mail.plan") + ": " + plan.options[plan.selectedIndex].text,
-        "",
-        t("mail.msg") + ":",
-        msg
-      ];
-      var href = "mailto:webbicontacts@gmail.com?subject=" + encodeURIComponent(fill(t("mail.subject"), { name: name })) +
-        "&body=" + encodeURIComponent(lines.join("\n"));
-      status.className = "form-status ok"; status.textContent = t("form.ok");
-      window.location.href = href;
+
+      // pages opened straight from disk have no server to send to
+      if (location.protocol === "file:" || !window.fetch) { mailtoFallback(name, email, msg); return; }
+
+      submit.disabled = true;
+      var label = submit.textContent;
+      submit.textContent = t("form.sending");
+      setStatus("", "");
+      fetch(form.getAttribute("action"), { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } })
+        .then(function (r) {
+          var type = r.headers.get("content-type") || "";
+          if (type.indexOf("json") === -1) throw new Error("no-server"); // e.g. a host without PHP
+          return r.json().then(function (data) { return { status: r.status, data: data }; });
+        })
+        .then(function (res) {
+          if (res.data && res.data.ok) {
+            form.reset();
+            if (started) started.value = String(Date.now());
+            setStatus("ok", t("form.sent"));
+          } else if (res.status === 400) {
+            setStatus("err", t("form.err"));
+          } else {
+            setStatus("err", t("form.fail"));
+          }
+        })
+        .catch(function () { mailtoFallback(name, email, msg); })
+        .then(function () { submit.disabled = false; submit.textContent = label; });
     });
+  }
+
+  /* ---------- "Which package is right for you?" quiz ---------- */
+  function initQuiz() {
+    var box = document.getElementById("quiz-box");
+    if (!box) return;
+    var qs = Array.prototype.slice.call(box.querySelectorAll(".quiz-q"));
+    var result = document.getElementById("quiz-result");
+    var stepEl = document.getElementById("quiz-step"), bar = document.getElementById("quiz-bar");
+    var back = document.getElementById("quiz-back"), restart = document.getElementById("quiz-restart");
+    var answers = {}, at = 0;
+    var PLANS = {
+      starter: { name: t("pkg.starter"), setup: 300, min: 40, max: 40 },
+      growth: { name: t("pkg.growth"), setup: 500, min: 60, max: 60 },
+      premium: { name: "Premium", setup: 948, min: 120, max: 180 }
+    };
+
+    function pick() {
+      if (answers.sell === "yes" || answers.custom === "yes") return "premium";
+      if (answers.booking === "yes" || answers.seo === "yes") return "growth";
+      return "starter";
+    }
+
+    function show(i) {
+      at = i;
+      qs.forEach(function (q, k) { q.hidden = k !== i; });
+      var done = i >= qs.length;
+      result.hidden = !done;
+      stepEl.textContent = done ? t("quiz.result") : fill(t("quiz.step"), { n: i + 1, total: qs.length });
+      bar.style.width = (done ? 100 : (i / qs.length) * 100) + "%";
+      back.hidden = i === 0 || done;
+      restart.hidden = !done;
+      document.querySelectorAll(".plan.is-recommended").forEach(function (p) { p.classList.remove("is-recommended"); });
+      if (done) {
+        var id = pick(), p = PLANS[id];
+        document.getElementById("quiz-plan").textContent = p.name;
+        document.getElementById("quiz-price").textContent = money(p.setup) + " · " + t("then") + " " +
+          (p.min === p.max ? money(p.min) : money(p.min) + " " + t("to") + " " + money(p.max)) + " " + t("permonth");
+        document.getElementById("quiz-why").textContent = t("quiz.r." + id);
+        document.getElementById("quiz-choose").href = box.getAttribute("data-contact") + "?plan=" + id;
+        document.getElementById("quiz-see").href = "#plan-" + id;
+        var card = document.getElementById("plan-" + id);
+        if (card) card.classList.add("is-recommended");
+      }
+    }
+
+    qs.forEach(function (q, k) {
+      q.querySelectorAll("[data-a]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          answers[q.getAttribute("data-q")] = b.getAttribute("data-a");
+          show(k + 1);
+          var next = k + 1 < qs.length ? qs[k + 1].querySelector("button") : document.getElementById("quiz-choose");
+          if (next) next.focus({ preventScroll: true });
+        });
+      });
+    });
+    back.addEventListener("click", function () { show(Math.max(0, at - 1)); });
+    restart.addEventListener("click", function () { answers = {}; show(0); });
+    show(0);
   }
 
   var yearEl = document.getElementById("year");
@@ -221,4 +314,5 @@
   initSwipe();
   initCopy();
   initForm();
+  initQuiz();
 })();

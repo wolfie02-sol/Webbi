@@ -15,6 +15,9 @@ DirectoryIndex index.html
 # Build files are not part of the website
 RedirectMatch 404 ^/(src|scripts)(/|$)
 
+# Branded "page not found"
+ErrorDocument 404 /404.html
+
 Options -Indexes
 
 # Compress text files

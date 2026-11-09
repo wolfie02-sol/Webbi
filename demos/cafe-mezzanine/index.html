@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Café Mezzanine · Concept par Webbi</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Site concept d'un café fictif, conçu par Webbi.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600&display=swap">
+<style>
+  :root { --bg: #f3ece2; --paper: #fbf8f3; --ink: #2a1a12; --muted: #6e5a4c; --tomato: #d4432b; --green: #2f5d4a; --line: #dccfbf;
+    --f-d: "Fraunces", Georgia, serif; --f-b: "Work Sans", system-ui, sans-serif; }
+  * { box-sizing: border-box; } body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--f-b); }
+  a { color: inherit; } h1, h2, h3 { margin: 0; font-family: var(--f-d); text-wrap: balance; } p { margin: 0; }
+  .w { max-width: 1100px; margin-inline: auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+  .demo-bar { background: #111; color: #fff; font: 600 13px/1.4 system-ui, sans-serif; }
+  .demo-bar .w { display: flex; justify-content: space-between; gap: 12px; padding-block: 8px; flex-wrap: wrap; }
+  .demo-bar a { color: #c7b4ff; text-decoration: none; }
+  header .w { display: flex; align-items: center; justify-content: space-between; padding-block: 22px; gap: 16px; flex-wrap: wrap; }
+  .logo { font: 900 italic 26px/1 var(--f-d); text-decoration: none; letter-spacing: -.01em; }
+  .logo i { color: var(--tomato); font-style: normal; }
+  nav { display: flex; gap: 22px; font-weight: 500; } nav a { text-decoration: none; border-bottom: 2px solid transparent; } nav a:hover { border-color: var(--tomato); }
+  .hero .w { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; padding-block: 40px 72px; }
+  .hero h1 { font-size: clamp(2.6rem, 1.4rem + 5vw, 5.4rem); line-height: .95; font-weight: 900; letter-spacing: -.03em; }
+  .hero h1 em { color: var(--tomato); }
+  .hero p { margin: 22px 0 28px; font-size: 19px; color: var(--muted); max-width: 34ch; }
+  .open { display: inline-flex; align-items: center; gap: 10px; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 10px 16px; font-weight: 600; }
+  .open i { width: 10px; height: 10px; border-radius: 50%; background: #2e9d5b; }
+  .cup { position: relative; aspect-ratio: 1; max-width: 420px; width: 100%; justify-self: center; }
+  .cup .saucer { position: absolute; inset: auto 4% 6% 4%; height: 18%; border-radius: 50%; background: var(--paper); box-shadow: 0 20px 40px -20px rgba(42,26,18,.5); }
+  .cup .body { position: absolute; left: 20%; right: 26%; bottom: 14%; height: 46%; background: var(--tomato); border-radius: 0 0 48% 48% / 0 0 60% 60%; }
+  .cup .rim { position: absolute; left: 20%; right: 26%; bottom: 56%; height: 12%; border-radius: 50%; background: #5a3020; border: 10px solid var(--tomato); }
+  .cup .handle { position: absolute; right: 12%; bottom: 30%; width: 22%; height: 22%; border: 14px solid var(--tomato); border-left: 0; border-radius: 0 50% 50% 0; }
+  .cup .steam { position: absolute; bottom: 72%; width: 10%; height: 22%; border-left: 5px solid var(--muted); border-radius: 50%; opacity: .45; animation: rise 3s ease-in-out infinite; }
+  .cup .steam:nth-of-type(5) { left: 36%; } .cup .steam:nth-of-type(6) { left: 48%; animation-delay: .8s; } .cup .steam:nth-of-type(7) { left: 60%; animation-delay: 1.6s; }
+  @keyframes rise { 0% { transform: translateY(10px); opacity: 0; } 50% { opacity: .5; } 100% { transform: translateY(-20px); opacity: 0; } }
+  section { padding-block: 72px; } .kick { font: 600 13px/1 var(--f-b); letter-spacing: .14em; text-transform: uppercase; color: var(--tomato); margin-bottom: 10px; }
+  h2 { font-size: clamp(2rem, 1.3rem + 2.4vw, 3.2rem); line-height: 1; letter-spacing: -.02em; }
+  .menu { background: var(--paper); }
+  .tabs { display: flex; gap: 8px; margin: 26px 0 18px; flex-wrap: wrap; }
+  .tabs button { font: 600 15px var(--f-b); padding: 10px 18px; border-radius: 999px; border: 1.5px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .items { display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+  .item { display: flex; align-items: baseline; gap: 10px; padding-block: 16px; border-bottom: 1px dashed var(--line); }
+  .item h3 { font-size: 20px; font-weight: 700; } .item p { color: var(--muted); font-size: 14px; }
+  .item .dots { flex: 1; } .item .price { font: 700 18px var(--f-d); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .visit .w { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 18px; } td { padding: 12px 0; border-bottom: 1px solid var(--line); } td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  tr.today td { color: var(--tomato); font-weight: 700; }
+  .card { background: var(--green); color: #f3ece2; border-radius: 22px; padding: 30px; display: grid; gap: 14px; align-content: start; }
+  .card h3 { font-size: 28px; } .card .btn { justify-self: start; background: var(--bg); color: var(--ink); padding: 12px 20px; border-radius: 999px; font-weight: 600; text-decoration: none; }
+  footer { border-top: 1px solid var(--line); padding-block: 26px; font-size: 14px; color: var(--muted); }
+  footer .w { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  :focus-visible { outline: 3px solid var(--tomato); outline-offset: 2px; }
+  @media (max-width: 820px) { .hero .w, .visit .w, .items { grid-template-columns: 1fr; } nav { display: none; } .cup { max-width: 300px; } }
+  @media (prefers-reduced-motion: reduce) { .cup .steam { animation: none; } }
+</style>
+</head>
+<body>
+<div class="demo-bar"><div class="w"><span>Concept de démonstration par Webbi · entreprise fictive / Demo concept by Webbi · fictional business</span><a href="../../">← Retour à Webbi / Back to Webbi</a></div></div>
+<header><div class="w"><a class="logo" href="#">Café <i>Mezzanine</i></a><nav><a href="#menu">Menu</a><a href="#visite">Nous visiter</a></nav></div></header>
+
+<section class="hero" style="padding-block:0"><div class="w">
+  <div>
+    <span class="open" id="open-now"><i></i>Ouvert aujourd'hui · 7 h à 18 h</span>
+    <h1 style="margin-top:22px">Le café du quartier, <em>un étage plus haut.</em></h1>
+    <p>Espresso torréfié à Montréal, viennoiseries du matin et grandes tables pour travailler. Au Mile End, deuxième étage.</p>
+    <a class="open" href="#menu" style="text-decoration:none;background:var(--ink);color:var(--paper);border-color:var(--ink)">Voir le menu →</a>
+  </div>
+  <div class="cup" aria-hidden="true"><span class="saucer"></span><span class="body"></span><span class="rim"></span><span class="handle"></span><span class="steam"></span><span class="steam"></span><span class="steam"></span></div>
+</div></section>
+
+<section class="menu" id="menu"><div class="w">
+  <p class="kick">À la carte</p><h2>Menu</h2>
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="cafe">Cafés</button>
+    <button role="tab" aria-selected="false" data-tab="froid">Boissons froides</button>
+    <button role="tab" aria-selected="false" data-tab="manger">À manger</button>
+  </div>
+  <div class="items" data-panel="cafe">
+    <div class="item"><div><h3>Espresso</h3><p>Mélange maison, notes de cacao</p></div><span class="dots"></span><span class="price">3,25 $</span></div>
+    <div class="item"><div><h3>Allongé</h3><p>Espresso et eau chaude</p></div><span class="dots"></span><span class="price">3,75 $</span></div>
+    <div class="item"><div><h3>Cappuccino</h3><p>Lait moussé, 6 oz</p></div><span class="dots"></span><span class="price">4,75 $</span></div>
+    <div class="item"><div><h3>Latte à l'avoine</h3><p>Boisson d'avoine sans frais</p></div><span class="dots"></span><span class="price">5,50 $</span></div>
+  </div>
+  <div class="items" data-panel="froid" hidden>
+    <div class="item"><div><h3>Infusion à froid</h3><p>Infusé 18 heures</p></div><span class="dots"></span><span class="price">5,00 $</span></div>
+    <div class="item"><div><h3>Latte glacé</h3><p>Lait au choix</p></div><span class="dots"></span><span class="price">5,75 $</span></div>
+    <div class="item"><div><h3>Limonade maison</h3><p>Citron et romarin</p></div><span class="dots"></span><span class="price">4,50 $</span></div>
+  </div>
+  <div class="items" data-panel="manger" hidden>
+    <div class="item"><div><h3>Croissant au beurre</h3><p>Cuit sur place chaque matin</p></div><span class="dots"></span><span class="price">3,50 $</span></div>
+    <div class="item"><div><h3>Bol granola</h3><p>Yogourt, fruits de saison</p></div><span class="dots"></span><span class="price">8,50 $</span></div>
+    <div class="item"><div><h3>Sandwich du jour</h3><p>Pain au levain, demandez au comptoir</p></div><span class="dots"></span><span class="price">11,00 $</span></div>
+  </div>
+</div></section>
+
+<section class="visit" id="visite"><div class="w">
+  <div><p class="kick">Heures d'ouverture</p><h2>Nous visiter</h2>
+    <table id="hours">
+      <tr data-d="1"><td>Lundi</td><td>7 h – 18 h</td></tr><tr data-d="2"><td>Mardi</td><td>7 h – 18 h</td></tr>
+      <tr data-d="3"><td>Mercredi</td><td>7 h – 18 h</td></tr><tr data-d="4"><td>Jeudi</td><td>7 h – 20 h</td></tr>
+      <tr data-d="5"><td>Vendredi</td><td>7 h – 20 h</td></tr><tr data-d="6"><td>Samedi</td><td>8 h – 17 h</td></tr><tr data-d="0"><td>Dimanche</td><td>8 h – 17 h</td></tr>
+    </table>
+  </div>
+  <div class="card"><p class="kick" style="color:#f3c8b8">Adresse fictive</p><h3>Mile End, Montréal</h3><p>Deuxième étage, accès par l'escalier vert. Wi-Fi gratuit et prises à chaque table.</p><a class="btn" href="#">Itinéraire →</a></div>
+</div></section>
+
+<footer><div class="w"><span>© Café Mezzanine · entreprise fictive</span><span>Site concept conçu et réalisé par <a href="../../">Webbi</a></span></div></footer>
+<script>
+  document.querySelectorAll("[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll("[data-tab]").forEach(function (x) { x.setAttribute("aria-selected", String(x === b)); });
+      document.querySelectorAll("[data-panel]").forEach(function (p) { p.hidden = p.getAttribute("data-panel") !== b.getAttribute("data-tab"); });
+    });
+  });
+  var d = new Date().getDay(), row = document.querySelector('#hours tr[data-d="' + d + '"]');
+  if (row) {
+    row.classList.add("today");
+    document.getElementById("open-now").lastChild.textContent = "Ouvert aujourd'hui · " + row.lastElementChild.textContent;
+  }
+</script>
+</body>
+</html>

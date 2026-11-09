@@ -12,11 +12,14 @@
 <meta property="og:description" content="Simple website packages from $300 + $40/month. No hidden fees, live in under a week, prices in CAD. Answers to common questions.">
 <meta property="og:locale" content="en_CA">
 <!-- set siteUrl in site.config.json to add canonical and hreflang links -->
-<link rel="icon" type="image/png" href="../../assets/webbi-logo.png">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+<meta name="theme-color" content="#612bfd">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="../../css/styles.css?v=1875eb00">
+<link rel="stylesheet" href="../../css/styles.css?v=be18524e">
 <script>try{var w=localStorage.getItem("webbi-theme");if(w==="dark"||w==="light")document.documentElement.setAttribute("data-theme",w)}catch(e){}</script>
 </head>
 <body data-page="pricing">
@@ -62,6 +65,7 @@
           <p class="kicker">Pricing</p>
           <h1 class="h2">Simple packages. No hidden fees.</h1>
           <p class="sub">One first payment to build your site, then a simple monthly fee. Every package includes mobile and desktop versions.</p>
+          <a class="text-link quiz-link" href="#quiz">Not sure? Find your package <span aria-hidden="true">↓</span></a>
         </div>
         <div class="seg" role="group" aria-label="Price view">
           <button type="button" id="view-month" data-view="month" aria-pressed="true">Monthly</button>
@@ -70,7 +74,7 @@
       </div>
 
       <div class="plans">
-        <article class="plan">
+        <article class="plan" id="plan-starter">
           <h2>Starter</h2>
           <p class="plan-desc">A sharp, professional website for new businesses.</p>
           <p class="plan-price"><span class="amt">$300</span></p>
@@ -86,7 +90,7 @@
           <a class="btn btn-ghost" href="../contact/?plan=starter">Choose Starter</a>
         </article>
 
-        <article class="plan plan-featured">
+        <article class="plan plan-featured" id="plan-growth">
           <span class="badge">Most popular</span>
           <h2>Growth</h2>
           <p class="plan-desc">Advanced SEO and online booking to bring in more clients.</p>
@@ -102,7 +106,7 @@
           <a class="btn btn-light" href="../contact/?plan=growth">Choose Growth</a>
         </article>
 
-        <article class="plan">
+        <article class="plan" id="plan-premium">
           <h2>Premium</h2>
           <p class="plan-desc">For selling online or needing custom features.</p>
           <p class="plan-price"><span class="amt">$948</span></p>
@@ -138,6 +142,54 @@
     </div>
   </section>
 
+  <section class="quiz-section" id="quiz">
+    <div class="wrap">
+      <div class="quiz" id="quiz-box" data-contact="../contact/">
+        <div class="quiz-intro">
+          <p class="kicker on-brand">Not sure?</p>
+          <h2 class="h2">Which package is right for you?</h2>
+          <p>Answer 4 quick questions and we'll recommend one.</p>
+        </div>
+        <div class="quiz-panel">
+          <div class="quiz-top">
+            <span class="quiz-step" id="quiz-step">Question {n} of {total}</span>
+            <span class="quiz-bar" aria-hidden="true"><i id="quiz-bar"></i></span>
+          </div>
+          <div class="quiz-q" data-q="sell">
+            <p class="quiz-question">Do you want to sell products online?</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">Yes</button><button type="button" class="btn btn-outline-light" data-a="no">No</button></div>
+          </div>
+          <div class="quiz-q" data-q="custom" hidden>
+            <p class="quiz-question">Do you need custom features, like a client area or a price calculator?</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">Yes</button><button type="button" class="btn btn-outline-light" data-a="no">No</button></div>
+          </div>
+          <div class="quiz-q" data-q="booking" hidden>
+            <p class="quiz-question">Should customers be able to book or request a quote online?</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">Yes</button><button type="button" class="btn btn-outline-light" data-a="no">No</button></div>
+          </div>
+          <div class="quiz-q" data-q="seo" hidden>
+            <p class="quiz-question">Is showing up on Google a top priority?</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">Yes</button><button type="button" class="btn btn-outline-light" data-a="no">No</button></div>
+          </div>
+          <div class="quiz-result" id="quiz-result" hidden aria-live="polite">
+            <p class="quiz-label">Our recommendation</p>
+            <p class="quiz-plan" id="quiz-plan"></p>
+            <p class="quiz-price" id="quiz-price"></p>
+            <p class="quiz-why" id="quiz-why"></p>
+            <div class="quiz-opts">
+              <a class="btn btn-light" id="quiz-choose" href="../contact/">Choose this package</a>
+              <a class="btn btn-outline-light" id="quiz-see" href="#pricing">See details</a>
+            </div>
+          </div>
+          <div class="quiz-foot">
+            <button type="button" class="quiz-back" id="quiz-back" hidden>← Back</button>
+            <button type="button" class="quiz-back" id="quiz-restart" hidden>↺ Start over</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section faq-section" id="faq">
     <div class="wrap split">
       <div class="split-head">
@@ -167,6 +219,7 @@
 
 
 
+
 <nav class="wrap" aria-label="Previous / Next">
   <div class="pager">
     <a class="pager-link pager-prev" rel="prev" href="../services/"><small>← Previous</small><b>Services</b></a>
@@ -193,13 +246,14 @@
       <a href="./" aria-current="page">Pricing</a>
       <a href="../about/">About</a>
       <a href="../contact/">Contact</a>
+      <a href="../privacy/">Privacy</a>
     </nav>
     <p class="footer-contact">514-559-1276 · 514-808-5966 · webbicontacts@gmail.com</p>
     <p class="footer-copy">© <span id="year">2026</span> Webbi · Montreal, QC. All rights reserved.</p>
   </div>
 </footer>
 
-<script src="../../js/i18n.js?v=1875eb00"></script>
-<script src="../../js/main.js?v=1875eb00"></script>
+<script src="../../js/i18n.js?v=be18524e"></script>
+<script src="../../js/main.js?v=be18524e"></script>
 </body>
 </html>

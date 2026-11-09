@@ -36,8 +36,11 @@ const PAGES = [
   { id: "pricing",  slug: { fr: "tarifs",   en: "pricing" } },
   { id: "about",    slug: { fr: "a-propos", en: "about" } },
   { id: "contact",  slug: { fr: "contact",  en: "contact" } },
+  { id: "privacy",  slug: { fr: "confidentialite", en: "privacy" }, menu: false },
 ];
-const NAV_KEY = { home: "nav.home", services: "nav.services", pricing: "nav.pricing", about: "nav.about", contact: "nav.contact" };
+const MENU = PAGES.filter((p) => p.menu !== false);
+const NAV_KEY = { home: "nav.home", services: "nav.services", pricing: "nav.pricing", about: "nav.about", contact: "nav.contact", privacy: "nav.privacy" };
+const TITLE_KEY = { privacy: "privacy.title" };
 
 // cache-busting version from the CSS/JS contents
 const version = crypto.createHash("sha1")
@@ -62,7 +65,7 @@ function money(lang, n) {
   return lang === "fr" ? `${s} $` : `$${s}`;
 }
 
-function build(lang, page, idx) {
+function build(lang, page) {
   const d = DICT[lang];
   const t = (k) => {
     if (!(k in d)) throw new Error(`Missing ${lang} text for "${k}"`);
@@ -79,9 +82,9 @@ function build(lang, page, idx) {
   // keep only this page's content block
   let html = template.replace(/<!-- page:(\w+) -->([\s\S]*?)<!-- \/page:\1 -->\n?/g, (_, id, body) => (id === page.id ? body : ""));
 
-  const navLinks = (cls) => PAGES.map((p) => {
+  const navLinks = (list) => list.map((p) => {
     const cur = p.id === page.id ? ' aria-current="page"' : "";
-    return `      <a${cls ? ` class="${cls}"` : ""} href="${url(p.id)}"${cur}>${esc(t(NAV_KEY[p.id]))}</a>`;
+    return `      <a href="${url(p.id)}"${cur}>${esc(t(NAV_KEY[p.id]))}</a>`;
   }).join("\n");
 
   const langSwitch = LANGS.map((l) => {
@@ -90,15 +93,16 @@ function build(lang, page, idx) {
     return `        <a href="${relLink(here, pageDir(l, page))}" hreflang="${l}" lang="${l}" data-lang="${l}" title="${label}"${cur}>${l.toUpperCase()}</a>`;
   }).join("\n");
 
-  const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+  const idx = MENU.indexOf(page);
+  const prev = idx > 0 ? MENU[idx - 1] : null, next = idx >= 0 ? MENU[idx + 1] : null;
   const pagerLink = (p, dir) => {
     if (!p) return "    <span></span>";
     const arrowL = dir === "prev" ? "← " : "", arrowR = dir === "next" ? " →" : "";
     return `    <a class="pager-link pager-${dir}" rel="${dir}" href="${url(p.id)}"><small>${arrowL}${esc(t("pager." + dir))}${arrowR}</small><b>${esc(t(NAV_KEY[p.id]))}</b></a>`;
   };
-  const pager = `<nav class="wrap" aria-label="${esc(t("pager.prev"))} / ${esc(t("pager.next"))}">\n  <div class="pager">\n${pagerLink(prev, "prev")}\n${pagerLink(next, "next")}\n  </div>\n  </nav>`;
+  const pager = idx < 0 ? "" : `<nav class="wrap" aria-label="${esc(t("pager.prev"))} / ${esc(t("pager.next"))}">\n  <div class="pager">\n${pagerLink(prev, "prev")}\n${pagerLink(next, "next")}\n  </div>\n  </nav>`;
 
-  const title = page.id === "home" ? t("meta.title") : `${t(NAV_KEY[page.id])} · ${t("meta.suffix")}`;
+  const title = page.id === "home" ? t("meta.title") : `${t(TITLE_KEY[page.id] || NAV_KEY[page.id])} · ${t("meta.suffix")}`;
   const description = page.id === "home" ? t("meta.desc") : t("meta.desc." + page.id);
 
   let seo = "";
@@ -107,7 +111,9 @@ function build(lang, page, idx) {
     seo += `<meta property="og:url" content="${absUrl(lang, page)}">\n`;
     for (const l of LANGS) seo += `<link rel="alternate" hreflang="${l}-CA" href="${absUrl(l, page)}">\n`;
     seo += `<link rel="alternate" hreflang="x-default" href="${absUrl(DEFAULT_LANG, page)}">\n`;
-    seo += `<meta property="og:image" content="${SITE_URL}/assets/webbi-logo.png">`;
+    seo += `<meta property="og:image" content="${SITE_URL}/assets/og-${lang}.png">\n`;
+    seo += `<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n`;
+    seo += `<meta name="twitter:card" content="summary_large_image">`;
   } else {
     seo = "<!-- set siteUrl in site.config.json to add canonical and hreflang links -->";
   }
@@ -129,9 +135,9 @@ function build(lang, page, idx) {
   const vars = {
     htmllang: lang === "fr" ? "fr-CA" : "en-CA",
     oglocale: lang === "fr" ? "fr_CA" : "en_CA",
-    page: page.id, title: esc(title), description: esc(description), version,
+    page: page.id, title: esc(title), description: esc(description), version, langcode: lang,
   };
-  const raw = { seo, nav: navLinks(""), footnav: navLinks(""), langswitch: langSwitch, pager };
+  const raw = { seo, nav: navLinks(MENU), footnav: navLinks(PAGES), langswitch: langSwitch, pager };
 
   html = html.replace(/\{\{([^}]+)\}\}/g, (_, tok) => {
     tok = tok.trim();
@@ -153,8 +159,8 @@ function write(rel, content) {
 
 let count = 0;
 for (const lang of LANGS) {
-  PAGES.forEach((page, i) => {
-    write(path.join(pageDir(lang, page), "index.html"), build(lang, page, i));
+  PAGES.forEach((page) => {
+    write(path.join(pageDir(lang, page), "index.html"), build(lang, page));
     count++;
   });
 }
@@ -190,6 +196,32 @@ ${SITE_URL ? `<link rel="canonical" href="${absUrl(DEFAULT_LANG, PAGES[0])}">\n`
 </head>
 <body>
   <div><a href="${rootTarget("fr")}" hreflang="fr">Français</a><a href="${rootTarget("en")}" hreflang="en">English</a></div>
+</body>
+</html>
+`);
+
+// branded "page not found", served by .htaccess for any address, so it uses root-relative paths
+write("404.html", `<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>404 · ${esc(DICT.fr["nf.title"])} · Webbi</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Figtree:wght@400;600&family=JetBrains+Mono:wght@600&display=swap">
+<link rel="stylesheet" href="/css/styles.css?v=${version}">
+<script>try{var w=localStorage.getItem("webbi-theme");if(w==="dark"||w==="light")document.documentElement.setAttribute("data-theme",w)}catch(e){}</script>
+</head>
+<body data-page="notfound">
+<main class="nf wrap">
+  <a href="/" aria-label="Webbi"><img class="logo logo-on-light" src="/assets/webbi-logo.png" alt="Webbi" width="120" height="42"><img class="logo logo-on-dark" src="/assets/webbi-logo-dark.png" alt="" width="120" height="42"></a>
+  <p class="nf-code" aria-hidden="true">404</p>
+  <div class="nf-cols">
+    <div lang="fr"><h1 class="h2">${esc(DICT.fr["nf.title"])}</h1><p class="sub">${esc(DICT.fr["nf.text"])}</p><a class="btn btn-brand" href="/fr/">${esc(DICT.fr["nf.home"])}</a></div>
+    <div lang="en"><h2 class="h2">${esc(DICT.en["nf.title"])}</h2><p class="sub">${esc(DICT.en["nf.text"])}</p><a class="btn btn-ghost" href="/en/">${esc(DICT.en["nf.home"])}</a></div>
+  </div>
+</main>
 </body>
 </html>
 `);

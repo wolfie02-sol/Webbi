@@ -12,7 +12,10 @@
 <meta property="og:description" content="{{description}}">
 <meta property="og:locale" content="{{oglocale}}">
 {{seo}}
-<link rel="icon" type="image/png" href="{{asset:assets/webbi-logo.png}}">
+<link rel="icon" href="{{asset:assets/favicon.svg}}" type="image/svg+xml">
+<link rel="icon" href="{{asset:assets/favicon-32.png}}" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="{{asset:assets/apple-touch-icon.png}}">
+<meta name="theme-color" content="#612bfd">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
@@ -135,6 +138,39 @@
       </div>
     </div>
   </section>
+
+  <section class="demos" id="concepts">
+    <div class="wrap">
+      <div class="hub-head">
+        <p class="kicker">{{demo.kicker}}</p>
+        <h2 class="h2">{{demo.title}}</h2>
+        <p class="sub">{{demo.sub}}</p>
+      </div>
+      <div class="demo-grid">
+        <a class="demo-card" href="{{asset:demos/plomberie-boreal/index.html}}">
+          <img src="{{asset:assets/demos/plomberie-boreal.jpg}}" alt="" width="640" height="400" loading="lazy">
+          <span class="demo-badge">{{demo.badge}}</span>
+          <h3>Plomberie Boréal</h3>
+          <p>{{demo.1.d}}</p>
+          <span class="hub-go">{{demo.view}} <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="demo-card" href="{{asset:demos/cafe-mezzanine/index.html}}">
+          <img src="{{asset:assets/demos/cafe-mezzanine.jpg}}" alt="" width="640" height="400" loading="lazy">
+          <span class="demo-badge">{{demo.badge}}</span>
+          <h3>Café Mezzanine</h3>
+          <p>{{demo.2.d}}</p>
+          <span class="hub-go">{{demo.view}} <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="demo-card" href="{{asset:demos/atelier-lys/index.html}}">
+          <img src="{{asset:assets/demos/atelier-lys.jpg}}" alt="" width="640" height="400" loading="lazy">
+          <span class="demo-badge">{{demo.badge}}</span>
+          <h3>Atelier Lys</h3>
+          <p>{{demo.3.d}}</p>
+          <span class="hub-go">{{demo.view}} <span aria-hidden="true">→</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
 <!-- /page:home -->
 
 <!-- page:services -->
@@ -209,6 +245,7 @@
           <p class="kicker">{{price.kicker}}</p>
           <h1 class="h2">{{price.title}}</h1>
           <p class="sub">{{price.sub}}</p>
+          <a class="text-link quiz-link" href="#quiz">{{price.quizlink}} <span aria-hidden="true">↓</span></a>
         </div>
         <div class="seg" role="group" aria-label="{{view.label}}">
           <button type="button" id="view-month" data-view="month" aria-pressed="true">{{view.month}}</button>
@@ -217,7 +254,7 @@
       </div>
 
       <div class="plans">
-        <article class="plan">
+        <article class="plan" id="plan-starter">
           <h2>{{pkg.starter}}</h2>
           <p class="plan-desc">{{plan.s.d}}</p>
           <p class="plan-price"><span class="amt">{{price:300}}</span></p>
@@ -233,7 +270,7 @@
           <a class="btn btn-ghost" href="{{url:contact}}?plan=starter">{{plan.choose}}</a>
         </article>
 
-        <article class="plan plan-featured">
+        <article class="plan plan-featured" id="plan-growth">
           <span class="badge">{{popular}}</span>
           <h2>{{pkg.growth}}</h2>
           <p class="plan-desc">{{plan.g.d}}</p>
@@ -249,7 +286,7 @@
           <a class="btn btn-light" href="{{url:contact}}?plan=growth">{{plan.chooseG}}</a>
         </article>
 
-        <article class="plan">
+        <article class="plan" id="plan-premium">
           <h2>Premium</h2>
           <p class="plan-desc">{{plan.p.d}}</p>
           <p class="plan-price"><span class="amt">{{price:948}}</span></p>
@@ -282,6 +319,54 @@
         </div>
       </div>
       <p class="fine">{{price.fine}}</p>
+    </div>
+  </section>
+
+  <section class="quiz-section" id="quiz">
+    <div class="wrap">
+      <div class="quiz" id="quiz-box" data-contact="{{url:contact}}">
+        <div class="quiz-intro">
+          <p class="kicker on-brand">{{quiz.kicker}}</p>
+          <h2 class="h2">{{quiz.title}}</h2>
+          <p>{{quiz.sub}}</p>
+        </div>
+        <div class="quiz-panel">
+          <div class="quiz-top">
+            <span class="quiz-step" id="quiz-step">{{quiz.step}}</span>
+            <span class="quiz-bar" aria-hidden="true"><i id="quiz-bar"></i></span>
+          </div>
+          <div class="quiz-q" data-q="sell">
+            <p class="quiz-question">{{quiz.q1}}</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">{{quiz.yes}}</button><button type="button" class="btn btn-outline-light" data-a="no">{{quiz.no}}</button></div>
+          </div>
+          <div class="quiz-q" data-q="custom" hidden>
+            <p class="quiz-question">{{quiz.q2}}</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">{{quiz.yes}}</button><button type="button" class="btn btn-outline-light" data-a="no">{{quiz.no}}</button></div>
+          </div>
+          <div class="quiz-q" data-q="booking" hidden>
+            <p class="quiz-question">{{quiz.q3}}</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">{{quiz.yes}}</button><button type="button" class="btn btn-outline-light" data-a="no">{{quiz.no}}</button></div>
+          </div>
+          <div class="quiz-q" data-q="seo" hidden>
+            <p class="quiz-question">{{quiz.q4}}</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">{{quiz.yes}}</button><button type="button" class="btn btn-outline-light" data-a="no">{{quiz.no}}</button></div>
+          </div>
+          <div class="quiz-result" id="quiz-result" hidden aria-live="polite">
+            <p class="quiz-label">{{quiz.result}}</p>
+            <p class="quiz-plan" id="quiz-plan"></p>
+            <p class="quiz-price" id="quiz-price"></p>
+            <p class="quiz-why" id="quiz-why"></p>
+            <div class="quiz-opts">
+              <a class="btn btn-light" id="quiz-choose" href="{{url:contact}}">{{quiz.choose}}</a>
+              <a class="btn btn-outline-light" id="quiz-see" href="#pricing">{{quiz.see}}</a>
+            </div>
+          </div>
+          <div class="quiz-foot">
+            <button type="button" class="quiz-back" id="quiz-back" hidden>← {{quiz.back}}</button>
+            <button type="button" class="quiz-back" id="quiz-restart" hidden>↺ {{quiz.restart}}</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -384,7 +469,13 @@
         </ul>
       </div>
 
-      <form class="form" id="contact-form" novalidate>
+      <form class="form" id="contact-form" novalidate action="{{asset:contact.php}}" method="post">
+        <input type="hidden" name="lang" value="{{langcode}}">
+        <input type="hidden" name="t" id="f-t" value="">
+        <div class="hp" aria-hidden="true">
+          <label for="f-website">Website</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
         <div class="field">
           <label for="f-name">{{form.name}}</label>
           <input id="f-name" name="name" type="text" autocomplete="name" required>
@@ -417,12 +508,32 @@
           <label for="f-msg">{{form.msg}}</label>
           <textarea id="f-msg" name="message" rows="4" required></textarea>
         </div>
-        <button type="submit" class="btn btn-brand btn-block">{{form.send}}</button>
+        <button type="submit" class="btn btn-brand btn-block" id="f-submit">{{form.send}}</button>
+        <p class="form-note">{{form.privacy}} <a href="{{url:privacy}}">{{form.privacyLink}}</a></p>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       </form>
     </div>
   </section>
 <!-- /page:contact -->
+
+<!-- page:privacy -->
+  <section class="section legal" id="privacy">
+    <div class="wrap legal-inner">
+      <p class="kicker">{{privacy.kicker}}</p>
+      <h1 class="h2">{{privacy.title}}</h1>
+      <p class="legal-date">{{privacy.updated}}</p>
+      <p class="legal-intro">{{privacy.intro}}</p>
+      <h2>{{privacy.1.t}}</h2><p>{{privacy.1.d}}</p>
+      <h2>{{privacy.2.t}}</h2><p>{{privacy.2.d}}</p>
+      <h2>{{privacy.3.t}}</h2><p>{{privacy.3.d}}</p>
+      <h2>{{privacy.4.t}}</h2><p>{{privacy.4.d}}</p>
+      <h2>{{privacy.5.t}}</h2><p>{{privacy.5.d}}</p>
+      <h2>{{privacy.6.t}}</h2><p>{{privacy.6.d}}</p>
+      <h2>{{privacy.7.t}}</h2><p>{{privacy.7.d}}</p>
+      <h2>{{privacy.8.t}}</h2><p>{{privacy.8.d}}</p>
+    </div>
+  </section>
+<!-- /page:privacy -->
 
 {{pager}}
 </div>

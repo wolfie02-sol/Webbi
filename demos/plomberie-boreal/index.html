@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plomberie Boréal · Concept par Webbi</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Site concept d'un plombier fictif, conçu par Webbi.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+  :root { --navy: #0f2a44; --navy-2: #173a5c; --yellow: #ffc629; --ink: #0f1c2a; --muted: #55657a; --bg: #ffffff; --soft: #eef3f8; --line: #d9e2ec;
+    --f-d: "Archivo", "Arial Black", sans-serif; --f-b: "Public Sans", system-ui, sans-serif; }
+  * { box-sizing: border-box; } body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--f-b); }
+  a { color: inherit; } h1, h2, h3 { margin: 0; font-family: var(--f-d); text-wrap: balance; } p { margin: 0; }
+  .w { max-width: 1140px; margin-inline: auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+  .demo-bar { background: #111; color: #fff; font: 600 13px/1.4 var(--f-b); }
+  .demo-bar .w { display: flex; justify-content: space-between; gap: 12px; padding-block: 8px; flex-wrap: wrap; }
+  .demo-bar a { color: #c7b4ff; text-decoration: none; } .demo-bar a:hover { text-decoration: underline; }
+  .urgent { background: var(--yellow); color: var(--navy); font: 700 14px/1 var(--f-d); letter-spacing: .02em; }
+  .urgent .w { display: flex; justify-content: center; gap: 10px; padding-block: 10px; flex-wrap: wrap; text-align: center; }
+  header.nav { background: var(--navy); color: #fff; }
+  header.nav .w { display: flex; align-items: center; gap: 20px; padding-block: 16px; flex-wrap: wrap; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 900 22px/1 var(--f-d); text-transform: uppercase; letter-spacing: .02em; text-decoration: none; }
+  .logo svg { width: 34px; height: 34px; }
+  .links { display: flex; gap: 22px; margin-left: auto; font-weight: 600; font-size: 15px; } .links a { text-decoration: none; opacity: .85; } .links a:hover { opacity: 1; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 8px; font: 700 16px/1 var(--f-d); text-decoration: none; border: 0; cursor: pointer; }
+  .btn-y { background: var(--yellow); color: var(--navy); } .btn-y:hover { filter: brightness(1.06); }
+  .btn-o { border: 2px solid rgba(255,255,255,.5); color: #fff; } .btn-o:hover { border-color: #fff; }
+  .hero { background: var(--navy); color: #fff; position: relative; overflow: hidden; }
+  .hero::after { content: ""; position: absolute; right: -120px; top: -60px; width: 520px; height: 520px; border-radius: 50%; border: 70px solid var(--navy-2); }
+  .hero .w { position: relative; z-index: 1; display: grid; grid-template-columns: 1.2fr .8fr; gap: 40px; align-items: center; padding-block: 64px 80px; }
+  .hero h1 { font-size: clamp(2.4rem, 1.4rem + 4vw, 4.4rem); line-height: .98; font-weight: 900; text-transform: uppercase; }
+  .hero h1 span { color: var(--yellow); }
+  .hero p.lead { margin: 20px 0 28px; font-size: 19px; opacity: .85; max-width: 32ch; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .eta { background: #fff; color: var(--ink); border-radius: 14px; padding: 26px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+  .eta b { display: block; font: 900 64px/1 var(--f-d); color: var(--navy); } .eta small { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; }
+  .eta ul { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; font-weight: 600; }
+  .eta li::before { content: "✓"; color: #1c8a4c; margin-right: 8px; font-weight: 900; }
+  section { padding-block: 72px; } .kick { font: 700 13px/1 var(--f-d); letter-spacing: .12em; text-transform: uppercase; color: #b98a00; margin-bottom: 10px; }
+  h2 { font-size: clamp(1.8rem, 1.2rem + 2vw, 2.6rem); line-height: 1.05; text-transform: uppercase; font-weight: 900; color: var(--navy); }
+  .grid4 { margin-top: 32px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .svc { border: 2px solid var(--line); border-radius: 12px; padding: 22px; display: grid; gap: 8px; align-content: start; transition: border-color .2s, transform .2s; }
+  .svc:hover { border-color: var(--navy); transform: translateY(-3px); }
+  .svc svg { width: 34px; height: 34px; fill: none; stroke: var(--navy); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .svc h3 { font-size: 19px; } .svc p { color: var(--muted); font-size: 15px; } .svc .from { font: 700 15px/1 var(--f-d); color: var(--navy); margin-top: 6px; }
+  .zones { background: var(--soft); } .zones .w { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; } .chips span { background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 8px 14px; font-weight: 600; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; } .stats div { background: #fff; border-radius: 12px; padding: 20px; }
+  .stats b { display: block; font: 900 34px/1 var(--f-d); color: var(--navy); } .stats span { color: var(--muted); font-size: 14px; }
+  .quote .w { display: grid; grid-template-columns: .9fr 1.1fr; gap: 40px; }
+  form { display: grid; gap: 12px; background: var(--navy); padding: 26px; border-radius: 14px; color: #fff; }
+  label { font-size: 13px; font-weight: 600; opacity: .85; display: grid; gap: 6px; }
+  input, select, textarea { font: 500 16px var(--f-b); padding: 12px; border-radius: 8px; border: 0; width: 100%; color: var(--ink); background: #fff; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .note { font-size: 14px; min-height: 1.4em; color: var(--yellow); font-weight: 600; }
+  footer { background: var(--ink); color: #b9c4d0; padding-block: 28px; font-size: 14px; }
+  footer .w { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  @media (max-width: 860px) {
+    .hero .w, .zones .w, .quote .w { grid-template-columns: 1fr; } .grid4 { grid-template-columns: 1fr 1fr; } .links { display: none; }
+  }
+  @media (max-width: 520px) { .grid4, .row { grid-template-columns: 1fr; } .stats b { font-size: 26px; } header.nav .btn { display: none; } }
+</style>
+</head>
+<body>
+<div class="demo-bar"><div class="w"><span>Concept de démonstration par Webbi · entreprise fictive / Demo concept by Webbi · fictional business</span><a href="../../">← Retour à Webbi / Back to Webbi</a></div></div>
+<div class="urgent"><div class="w">⚡ Urgence 24/7 · Intervention en 60 minutes · 514-555-0142</div></div>
+<header class="nav"><div class="w">
+  <a class="logo" href="#"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#ffc629" d="M16 2c5 7 9 12 9 17a9 9 0 0 1-18 0c0-5 4-10 9-17Z"/><path fill="#0f2a44" d="M12 20a4 4 0 0 0 4 4" stroke="#0f2a44" stroke-width="2.4" stroke-linecap="round"/></svg>Plomberie Boréal</a>
+  <nav class="links"><a href="#services">Services</a><a href="#zones">Secteurs</a><a href="#soumission">Soumission</a></nav>
+  <a class="btn btn-y" href="#soumission">Soumission gratuite</a>
+</div></header>
+
+<section class="hero"><div class="w">
+  <div>
+    <h1>Fuite d'eau ? <span>On arrive en 60&nbsp;minutes.</span></h1>
+    <p class="lead">Plombiers certifiés sur la Rive-Nord et à Montréal, jour et nuit. Prix annoncé avant le début des travaux.</p>
+    <div class="ctas"><a class="btn btn-y" href="#soumission">📞 Appeler : 514-555-0142</a><a class="btn btn-o" href="#services">Nos services</a></div>
+  </div>
+  <div class="eta"><small>Temps d'arrivée moyen</small><b>47 min</b>
+    <ul><li>Disponible 24 h sur 24, 7 jours sur 7</li><li>Estimation gratuite et sans surprise</li><li>Travaux garantis 2 ans</li></ul>
+  </div>
+</div></section>
+
+<section id="services"><div class="w">
+  <p class="kick">Ce qu'on répare</p><h2>Nos services</h2>
+  <div class="grid4">
+    <div class="svc"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM10 7h6a4 4 0 0 1 4 4v9"/></svg><h3>Débouchage</h3><p>Éviers, toilettes et drains principaux, avec caméra d'inspection.</p><p class="from">Dès 149 $</p></div>
+    <div class="svc"><svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M10 8h4M12 14v3"/></svg><h3>Chauffe-eau</h3><p>Réparation et remplacement, électrique ou au gaz, le jour même.</p><p class="from">Dès 249 $</p></div>
+    <div class="svc"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 10a6 6 0 0 1-12 0c0-3 3-6 6-10Z"/></svg><h3>Fuites d'eau</h3><p>Détection sans démolition et réparation rapide des tuyaux.</p><p class="from">Dès 129 $</p></div>
+    <div class="svc"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5v-3ZM6 12V5a2 2 0 0 1 4 0"/></svg><h3>Salle de bain</h3><p>Installation de bains, douches, robinets et toilettes.</p><p class="from">Sur soumission</p></div>
+  </div>
+</div></section>
+
+<section class="zones" id="zones"><div class="w">
+  <div><p class="kick">Où on se déplace</p><h2>Secteurs desservis</h2>
+    <div class="chips"><span>Laval</span><span>Ahuntsic</span><span>Montréal-Nord</span><span>Saint-Laurent</span><span>Boisbriand</span><span>Terrebonne</span><span>Blainville</span></div></div>
+  <div class="stats"><div><b>24/7</b><span>Service d'urgence</span></div><div><b>60 min</b><span>Arrivée garantie</span></div><div><b>2 ans</b><span>Garantie travaux</span></div></div>
+</div></section>
+
+<section class="quote" id="soumission"><div class="w">
+  <div><p class="kick">Gratuit, sans engagement</p><h2>Demandez une soumission</h2><p style="margin-top:14px;color:var(--muted)">Décrivez le problème et nous vous rappelons en moins d'une heure pendant les heures d'ouverture.</p></div>
+  <form id="demo-form">
+    <div class="row"><label>Nom<input required></label><label>Téléphone<input type="tel" required></label></div>
+    <label>Type de travaux<select><option>Urgence / fuite</option><option>Débouchage</option><option>Chauffe-eau</option><option>Salle de bain</option></select></label>
+    <label>Description<textarea rows="3"></textarea></label>
+    <button class="btn btn-y" type="submit">Envoyer ma demande</button>
+    <p class="note" id="demo-note" role="status"></p>
+  </form>
+</div></section>
+
+<footer><div class="w"><span>© Plomberie Boréal · entreprise fictive</span><span>Site concept conçu et réalisé par <a href="../../">Webbi</a></span></div></footer>
+<script>
+  document.getElementById("demo-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    document.getElementById("demo-note").textContent = "Démo : ce formulaire n'envoie rien. / Demo: this form doesn't send anything.";
+  });
+</script>
+</body>
+</html>
