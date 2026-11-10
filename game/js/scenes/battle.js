@@ -71,14 +71,12 @@ function ring(side, color) { const p = POS[side], t0 = now(); for (let i = 0; i 
 
 // ── HUD
 function hudBox(side) {
-  const box = el('div', { class: `bh box ${side ? 'foe' : 'me'}` },
+  return el('div', { class: `bh box ${side ? 'foe' : 'me'}` },
     el('div', { class: 'row' }, el('span', { class: 'nm' }), el('span', { class: 'lv' })),
     el('div', { class: 'bar hpbar' }, el('i')),
-    el('div', { class: 'sub' }, el('span', { class: 'stwrap' }), el('span', { class: 'hpnum' })),
+    el('div', { class: 'sub' }, el('span', { class: 'stwrap' }), side ? el('span', { class: 'dots' }) : el('span', { class: 'hpnum' })),
     side ? null : el('div', { class: 'bar exp' }, el('i')),
-    el('div', { class: 'sub' }, el('span', { class: 'dots' }), el('span', {}, 'Surge')),
-    el('div', { class: 'bar surge' }, el('i')));
-  return box;
+    el('div', { class: 'srow' }, side ? null : el('span', { class: 'dots' }), el('div', { class: 'bar surge', title: 'Surge' }, el('i'))));
 }
 function setHp(side, hp, max) {
   const box = scene.hud[side], i = box.querySelector('.hpbar i'), f = Math.max(0, hp / max);
@@ -178,9 +176,9 @@ function commands() {
           mv.name, tag ? el('span', { class: 'eff ' + tag[0] }, tag[1]) : null,
           el('small', {}, el('span', {}, `${TYPES[mv.t].name} · ${mv.c === 't' ? 'Status' : mv.c === 'p' ? 'Phys' : 'Spec'}${mv.pow ? ' ' + mv.pow : ''}`), el('span', {}, `PP ${m.pp}/${mv.pp}`))));
       });
-      if (!usable) dock.append(btn('Flail (no PP left)', () => done({ type: 'move', i: -1 }), { class: 'wide' }));
+      if (!usable) dock.append(btn('Flail (no PP left)', () => done({ type: 'move', i: -1 }), { class: 'wide full' }));
       const full = b.sides[0].surge >= 100;
-      const sb = el('button', { class: 'wide surgebtn', disabled: !full, onclick: () => { surge = !surge; sfx(surge ? 'stat' : 'back'); sb.classList.toggle('on', surge); sb.textContent = surge ? '★ SURGE ARMED: ×1.5 power, cannot miss' : '☆ Surge ready: tap to arm'; } }, full ? '☆ Surge ready: tap to arm' : `Surge ${b.sides[0].surge}%`);
+      const sb = el('button', { class: 'wide surgebtn', disabled: !full, onclick: () => { surge = !surge; sfx(surge ? 'stat' : 'back'); sb.classList.toggle('on', surge); sb.textContent = surge ? '★ SURGE ARMED ×1.5' : '☆ Surge ready'; } }, full ? '☆ Surge ready' : `Surge ${b.sides[0].surge}%`);
       dock.append(sb, btn('← Back', main, { class: 'wide' }));
       (dock.querySelector('button:not(:disabled)') || sb).focus();
     };

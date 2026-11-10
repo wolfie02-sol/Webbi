@@ -32,6 +32,12 @@ Files you edit:
 
 Generated files (do not edit by hand): `index.html`, `404.html`, `fr/`, `en/`, `robots.txt`, and `sitemap.xml` once `siteUrl` is set.
 
+## Cryptwild (the game)
+
+`game/` holds Cryptwild, a monster-collecting RPG that runs at `/game/`. It is separate from the marketing
+site: nothing in `scripts/build.js` touches it and it needs no build step. See `game/README.md`.
+When deploying, upload the `game/` folder alongside the others.
+
 ## Making changes
 
 After editing any of the files above, rebuild the pages (needs [Node.js](https://nodejs.org)):

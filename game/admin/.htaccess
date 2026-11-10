@@ -1,0 +1,8 @@
+# Keep the operator dashboard private. To enable HTTP authentication on Apache hosting:
+#   1. Create a password file OUTSIDE public_html, e.g.  htpasswd -c /home/USER/.htpasswd-cryptwild operator
+#   2. Uncomment the four lines below and set the correct absolute path.
+# AuthType Basic
+# AuthName "Cryptwild operator"
+# AuthUserFile /home/USER/.htpasswd-cryptwild
+# Require valid-user
+Header set X-Robots-Tag "noindex, nofollow"
