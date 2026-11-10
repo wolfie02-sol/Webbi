@@ -24,6 +24,7 @@ const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1100, height: 720 } });
 // A mock Wallet Standard wallet with a real Ed25519 key, registered before the game loads.
 await ctx.addInitScript(async () => {
+  if (!globalThis.crypto || !crypto.subtle) return; // about:blank is not a secure context
   const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
   const b58 = (bytes) => { let n = 0n; for (const b of bytes) n = (n << 8n) | BigInt(b); let o = ''; while (n > 0n) { o = B58[Number(n % 58n)] + o; n /= 58n; } for (const b of bytes) { if (b === 0) o = '1' + o; else break; } return o; };
   const kp = await crypto.subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
@@ -47,17 +48,17 @@ const shot = async (name) => { if (shots) await p.screenshot({ path: path.join(s
 const st = () => p.evaluate(() => ({ scene: __cw.scene, map: __cw.s.map, x: __cw.s.x, y: __cw.s.y, locked: __cw.world.locked, moving: !!__cw.world.move }));
 const flag = (k) => p.evaluate((k) => !!(__cw.s.flags[k] || __cw.s.bag[k]), k);
 // Drives whatever is on screen (dialogue, choices, battle commands, forced switches) until the world is idle.
-async function settle({ choice = 0, max = 1500 } = {}) {
+async function settle({ prefer = [], max = 6000 } = {}) {
   for (let i = 0; i < max; i++) {
     const s = await p.evaluate(() => ({ scene: __cw.scene, locked: __cw.world.locked, cmds: [...document.querySelectorAll('#commands button')].map((b) => b.textContent), panel: !!document.querySelector('#panels .panel'), choice: !document.querySelector('#choice').hidden, n: document.querySelectorAll('#choice button').length }));
     if (s.scene === 'world' && !s.locked) return;
-    if (s.choice) { await p.evaluate((c) => { const b = [...document.querySelectorAll('#choice button')]; b[typeof c === 'function' ? 0 : Math.min(c, b.length - 1)].click(); }, choice); await p.waitForTimeout(40); continue; }
+    if (s.choice) { await p.evaluate((prefer) => { const b = [...document.querySelectorAll('#choice button')]; (b.find((x) => prefer.includes(x.textContent)) || b[0]).click(); }, prefer); await p.waitForTimeout(40); continue; }
     if (s.panel) { await p.evaluate(() => { const b = document.querySelector('#panels .panel:last-child .row-item:not(:disabled)'); if (b) b.click(); }); await p.waitForTimeout(60); continue; }
     if (s.cmds.some((c) => c.includes('Fight'))) { await p.evaluate(() => [...document.querySelectorAll('#commands button')].find((b) => b.textContent.includes('Fight')).click()); await p.waitForTimeout(20); continue; }
     if (s.cmds.some((c) => c.includes('PP '))) { await p.evaluate(() => { const b = [...document.querySelectorAll('#commands button.mv:not(:disabled)')]; const dmg = b.filter((x) => !/Status/.test(x.textContent)); (dmg[0] || b[0] || [...document.querySelectorAll('#commands button')].find((x) => /Flail/.test(x.textContent))).click(); }); await p.waitForTimeout(20); continue; }
     await p.keyboard.press('z'); await p.waitForTimeout(25);
   }
-  throw new Error('game did not settle');
+  throw new Error('game did not settle: ' + JSON.stringify(await p.evaluate(() => ({ scene: __cw.scene, locked: __cw.world.locked, dialog: document.querySelector('#dialogtext').textContent, cmds: document.querySelector('#commands').textContent.slice(0, 200), panels: document.querySelectorAll('#panels > *').length, choice: document.querySelector('#choice').textContent.slice(0, 200), party: __cw.s.party.map((m) => [m.id, m.hp, m.moves.map((x) => x.pp)]) }))));
 }
 // Stand next to an entity, face it, and press the action button.
 async function interact(map, ch, opts) {
@@ -139,7 +140,7 @@ check(await p.evaluate(() => !!__cw.s.col.cards['m-remember'] && !!__cw.s.col.ca
 log('Postgame');
 await interact('concord', 'T');
 check(await flag('champion'), 'Concord Trial cleared, champion');
-await interact('concord', 'X', { choice: 1 });
+await interact('concord', 'X', { prefer: ['Climb', 'Leave the tower'] });
 check(await p.evaluate(() => __cw.s.tower.best >= 1), 'Echo Tower floor cleared and recorded');
 check(await p.evaluate(() => { const w = __cw.world; w.load('saltgate', false); return w.visible(w.marker('8')); }), 'Thalassyr appears after the Trial');
 
