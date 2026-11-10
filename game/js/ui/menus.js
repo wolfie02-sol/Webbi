@@ -72,7 +72,7 @@ export const Menus = {
           el('div', { class: 'card-box' }, el('h3', {}, 'Moves'), ...mon.moves.map((m) => { const mv = MOVES[m.id]; return el('div', { style: { marginBottom: '6px' } }, typePill(mv.t), el('b', {}, mv.name), ` · ${mv.c === 't' ? 'Status' : (mv.c === 'p' ? 'Physical ' : 'Special ') + mv.pow} · PP ${m.pp}/${mv.pp}`, el('div', { class: 'note' }, mv.desc)); })),
           el('div', { class: 'btnrow' },
             idx > 0 ? el('button', { class: 'btn', onclick: () => { s.party.splice(idx, 1); s.party.unshift(mon); sfx('select'); toast(`${nameOf(mon)} now leads.`); api.close(); } }, 'Make leader') : null,
-            el('button', { class: 'btn alt', onclick: () => { const n = prompt('Nickname (leave empty to clear)', mon.nick || ''); if (n !== null) { mon.nick = n.trim().slice(0, 12) || null; api.setTitle(nameOf(mon)); api.redraw(); } } }, 'Nickname')))));
+            (() => { const inp = el('input', { id: 'nick', value: mon.nick || '', maxLength: 12, placeholder: 'Nickname', style: { background: '#0005', border: '2px solid var(--line)', borderRadius: '9px', color: 'var(--parch)', padding: '8px 10px', font: 'inherit', width: '150px' } }); return el('span', { style: { display: 'inline-flex', gap: '8px' } }, inp, el('button', { class: 'btn alt', onclick: () => { mon.nick = inp.value.trim().slice(0, 12) || null; sfx('select'); api.setTitle(nameOf(mon)); api.redraw(); } }, 'Set nickname')); })()))));
     });
   },
 

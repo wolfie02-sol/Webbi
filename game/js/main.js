@@ -9,7 +9,7 @@ import { Menus } from './ui/menus.js';
 import { Crypt } from './ui/crypt.js';
 import { Chain } from './ui/chain.js';
 import { loadConfig } from './config.js';
-import { el, $, say, focusNav, setTextFast, toast } from './ui/ui.js';
+import { el, $, say, choose, focusNav, setTextFast, toast } from './ui/ui.js';
 
 const canvas = $('#screen'), ctx = canvas.getContext('2d');
 ctx.imageSmoothingEnabled = false;
@@ -50,14 +50,18 @@ function showTitle() {
   const root = el('div', { id: 'title' }, el('h1', {}, 'CRYPTWILD'), el('div', { class: 'tag' }, 'A lantern, a friend, and a country full of buried light'));
   const start = (state) => { unlockAudio(); pop(); root.remove(); G.s = state; setAudio(state.settings); setTextFast(state.settings.fast); startWorld(); if (!state.flags.intro) intro(); };
   if (hasSave()) root.append(el('button', { onclick: () => { const s = loadGame(); if (!s) return toast('The save could not be read. Import a backup or start a new game.'); sfx('select'); start(s); } }, 'Continue'));
-  root.append(el('button', { onclick: () => {
-    if (hasSave() && !confirm('Start a new game? Your current save will be replaced. Export it first from Save & Options if you want to keep it.')) return;
-    sfx('select'); const s = newState(); const n = prompt('What is your name, Warden?', 'Warden'); s.name = (n || 'Warden').trim().slice(0, 12) || 'Warden'; saveGame(s); start(s);
+  const fresh = () => { sfx('select'); const s = newState(); let n = null; try { n = prompt('What is your name, Warden?', 'Warden'); } catch { /* no dialogs here */ } s.name = (n || 'Warden').trim().slice(0, 12) || 'Warden'; saveGame(s); start(s); };
+  root.append(el('button', { onclick: async () => {
+    if (!hasSave()) return fresh();
+    pop(); root.hidden = true;
+    const i = await choose('Start a new game? Your current save will be replaced.', ['Keep my save', 'Start over']);
+    root.hidden = false; pop = focusNav(root, null);
+    if (i === 1) fresh(); else root.querySelector('button').focus();
   } }, 'New game'));
   root.append(el('button', { onclick: () => { const inp = el('input', { type: 'file', accept: '.json,application/json', onchange: async () => { try { const s = deserialize(await inp.files[0].text()); saveGame(s); start(s); } catch (e) { toast(e.message); } } }); inp.click(); } }, 'Import save'));
   root.append(el('div', { class: 'fine' }, 'Free to play · no wallet needed · saves in this browser'));
   $('#overlay').append(root);
-  const pop = focusNav(root, null);
+  let pop = focusNav(root, null);
   root.querySelector('button').focus();
   onFirstInput(() => { unlockAudio(); music('title'); });
 }
