@@ -150,7 +150,17 @@ export class World {
     }
     // wild encounters
     const enc = this.map.enc;
-    if (enc && s.party.some((m) => m.hp > 0) && (ch === ',' || (enc.all && ch === '.')) && G.rng.chance(enc.rate)) this.run(() => this.wildEncounter());
+    if (enc && (ch === ',' || (enc.all && ch === '.'))) {
+      if (!s.party.some((m) => m.hp > 0)) {
+        // no Kith yet: say so instead of staying silent
+        if (ch === ',' && !this.warnedGrass) { this.warnedGrass = true; this.run(() => say('Something rustles in the tall grass. Wild Kith live here, but without a Kith of your own they keep their distance. Visit Maren\'s lab first.')); }
+        return;
+      }
+      // the longer you go without an encounter, the likelier the next step is; a short breather after each battle
+      this.sinceEnc = (this.sinceEnc || 0) + 1;
+      const rate = this.sinceEnc <= 2 ? 0 : Math.min(0.5, enc.rate * (1 + (this.sinceEnc - 2) / 8));
+      if (G.rng.chance(rate)) { this.sinceEnc = 0; this.run(() => this.wildEncounter()); }
+    }
   }
   spotted(t) {
     this.run(async () => {
