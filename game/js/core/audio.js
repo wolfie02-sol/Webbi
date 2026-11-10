@@ -8,7 +8,7 @@ function ensure() {
   if (ac) return true;
   const AC = globalThis.AudioContext || globalThis.webkitAudioContext;
   if (!AC) return false;
-  ac = new AC(); master = ac.createGain(); master.gain.value = 0.5; master.connect(ac.destination);
+  try { ac = new AC(); } catch { return false; } master = ac.createGain(); master.gain.value = 0.5; master.connect(ac.destination);
   musicGain = ac.createGain(); musicGain.gain.value = 0.32; musicGain.connect(master);
   sfxGain = ac.createGain(); sfxGain.gain.value = 0.6; sfxGain.connect(master);
   return true;
@@ -72,7 +72,7 @@ const SFX = {
 };
 export function sfx(name) {
   if (!settings.sfx || !ensure() || ac.state !== 'running') return;
-  const fn = SFX[name]; if (fn) fn(ac.currentTime + 0.005);
+  try { const fn = SFX[name]; if (fn) fn(ac.currentTime + 0.005); } catch { /* sound must never break the game */ }
 }
 
 // Music: [tempo, melody, bass] — whitespace-separated notes, one per 8th note, '-' = rest/hold.
@@ -97,12 +97,14 @@ export function music(name) {
   let i = 0, next = ac.currentTime + 0.08;
   const tick = () => {
     if (ac.state !== 'running') return;
+    try {
     while (next < ac.currentTime + 0.25) {
       const hold = (arr) => { let n = 1; while (arr[(i + n) % arr.length] === '-' && n < 4) n++; return n; };
       if (m[i % m.length] !== '-') tone(freq(m[i % m.length]), next, step * hold(m) * 0.95, 'square', 0.16, musicGain);
       if (b[i % b.length] !== '-') tone(freq(b[i % b.length]), next, step * hold(b) * 0.95, 'triangle', 0.3, musicGain);
       i++; next += step;
     }
+    } catch { stopMusic(); }
   };
   timer = setInterval(tick, 80); tick();
 }

@@ -262,6 +262,7 @@ export async function evolveScene(mon, to) {
 }
 
 export const BattleScene = {
+  reset() { scene = null; },
   async trainer(def) {
     const foeParty = def.party.map(([id, lvl]) => createMon(id, lvl, G.rng, { gleam: false }));
     return run({ wild: false, foeParty, name: def.name, ai: def.ai ?? 1, reward: def.reward, music: def.music });

@@ -91,9 +91,11 @@ addEventListener('visibilitychange', () => { if (document.hidden) G.save(); });
 addEventListener('pagehide', () => G.save());
 
 (async function boot() {
+  if (globalThis.__cw) { try { globalThis.__cw.save(); } catch { /* ignore */ } location.reload(); return; }
   initInput(); resize();
   G.config = await loadConfig();
   showTitle();
   requestAnimationFrame(frame);
   globalThis.__cw = G; // console/testing handle
+  try { globalThis.claude?.hot?.snapshot?.(() => { G.save(); return {}; }); } catch { /* not in a viewer */ }
 })();

@@ -91,7 +91,10 @@ export class World {
   async run(fn) {
     if (this.locked) return;
     this.locked = true; clearHeld();
-    try { await fn(this.g); } catch (e) { console.error(e); toast('Something went wrong: ' + e.message); }
+    try { await fn(this.g); } catch (e) {
+      console.error(e); toast('Something went wrong (' + e.message + '). Your game was saved; reload the page if anything looks stuck.');
+      G.scene = 'world'; document.body.classList.remove('inbattle'); G.battle.reset(); const c = document.getElementById('commands'); c.innerHTML = ''; c.hidden = true; document.getElementById('battlehud').innerHTML = ''; document.getElementById('dialog').hidden = true; this.fade = 0;
+    }
     this.locked = false;
     this.refreshHud(); G.save();
   }
