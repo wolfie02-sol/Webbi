@@ -5,6 +5,7 @@
   ],
   "events": [],
   "crates": {},
+  "collector": { "live": false, "endpoint": "", "season": "", "instantOdds": 0, "supply": { "legendary": 0, "epic": 0, "rare": 0 }, "raffleDate": "" },
   "rewards": { "paused": true, "legalReviewRef": "" },
   "solana": {
     "cluster": "mainnet-beta",

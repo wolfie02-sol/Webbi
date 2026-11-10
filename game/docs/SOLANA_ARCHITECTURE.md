@@ -100,6 +100,20 @@ and the game shows "No treasury configured — no rewards are funded."
   Flow: player action → service creates a pending distribution (commitment to the odds table hash) →
   VRF request → fulfilment → outcome derived by the same `rollCrate` code from the VRF bytes → mint.
 
+### Collector Crate flow (DESIGN)
+
+1. Client reports a boss win to the reward service with the player's signed session.
+2. Service checks the win is plausible (progression order, rate limits, one award per boss per account),
+   records the Collector Crate and its shards in the ledger. The client's own shard count is display only.
+3. If a season is live and supply remains, the service requests VRF randomness for the instant-win roll at
+   the configured odds; on a win it reserves a card from the season's fixed supply and mints it.
+4. At season end the service snapshots shard balances, publishes the snapshot hash, requests VRF
+   randomness and draws the remaining cards. Winners answer a skill-testing question before minting.
+
+Verifying single-player boss wins server-side is the hard part: the client is untrusted, so the service
+needs replayable battle logs (the battle engine is deterministic for this reason) or it must accept that
+shards measure play time and rely on per-account caps and Sybil controls.
+
 ## 4. On-chain cards — DESIGN
 
 - Standard: **Metaplex Core**. One account per asset, collection-level plugins (royalties, freeze,

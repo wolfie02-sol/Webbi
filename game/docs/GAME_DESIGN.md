@@ -173,7 +173,40 @@ global counter guarantees a Legendary. Counters are visible.
 **Dust**: spare copies refine into Dust; Dust crafts any non-Secret card directly, so the collection can
 always be finished without luck.
 
-### 7.5 Original systems
+### 7.5 Collector Crates, Crypt Shards and the season raffle
+
+The binder is the free collection. Real collector CRYPT cards are a separate, deliberately scarce tier.
+
+- **Collector Crates** come only from bosses: each Sigil Warden, Scribe-Captain Rook, Registrar Sable,
+  Curator Vane (2), the Concord Trial (2, then 1 per repeat clear) and every tenth Echo Tower floor.
+  They are never sold for coins, Dust, tokens or money.
+- Every Collector Crate gives **1–5 Crypt Shards** (average 1.8). One shard is one raffle entry.
+- When a **season** is live, each crate also has a very small **instant-win** chance (operator-set, hard
+  cap 1%) of a collector card, and the season ends with a **raffle** of the remaining cards among shard
+  holders.
+- **Supply is fixed per season** from the treasury's card budget. More players means lower odds per
+  entry, never more cards than the treasury can pay for. Live supply and odds are shown in the game.
+- The client can only ever award shards. Card wins are decided, capped and minted by the reward service
+  from on-chain randomness (see `SOLANA_ARCHITECTURE.md`).
+- Status: crates, shards, the Collector tab and the operator settings are **built**. Seasons, wins and the
+  raffle are **not** (they need the reward service). Shards earned before then sit in the local save, which
+  a player can edit, so they cannot be trusted as raffle entries: at season launch shards must be earned
+  and recorded server-side.
+
+### 7.6 Coin economy
+
+Coins are the in-game currency. Sources: trainer and boss rewards, quests, daily tasks, buried caches,
+selling items, bank interest. Sinks: Market goods, Basic and Silver crates, the Daily Bazaar (five offers
+a day, same for everyone, with purchase limits: a discounted bundle, a featured binder card, Dust, a
+discounted Silver Crate, an evolution shard).
+
+The **Lantern Bank** (a tab in every Market) pays 1% per real day on banked coins, capped at 2,500 a day
+and 30 days of absence. Fainting costs a tenth of carried coins; banked coins are safe.
+
+Hard rule: coins cannot be bought with money or tokens, cashed out, traded between players, or spent on
+Collector Crates or shards. That keeps the coin economy a game system and keeps raffle entry free.
+
+### 7.7 Original systems
 
 - **Constellations**: specific card combinations (e.g. the three starters' final forms) form a
   constellation. Completing one awards a Secret card and sometimes opens a place in the world.

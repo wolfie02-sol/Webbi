@@ -35,6 +35,17 @@ works in the end-to-end run but has no dedicated test. **Not built** = design on
 | Constellations → Secret cards and world unlocks | Done | Unit test + end-to-end (Aurora opens Starfall Hollow) |
 | First Codex record of a Kith grants its card | Done | End-to-end |
 
+| Collector Crates from bosses, Crypt Shards, Collector tab, season settings in the dashboard | Done (client side) | Unit test: the client can never award a card; end-to-end run opens one |
+| Collector seasons: instant wins, raffle, minting | **Not built** | Needs the reward service; shards in a local save are not trustworthy entries |
+
+## Coin economy
+
+| Feature | Status | Evidence |
+|---|---|---|
+| Lantern Bank with daily interest, caps and clock-rollback guard | Done | `world.test.mjs` |
+| Selling items, Daily Bazaar with limits, coin balance on the HUD | Done | `world.test.mjs` + end-to-end |
+| Coins cannot buy Collector Crates or shards | Done | Asserted in tests |
+
 ## Phase 4A — Solana, read-only: Done within stated limits
 
 - Wallet discovery (Wallet Standard + common injected providers), connect, sign-message ownership proof

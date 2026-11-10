@@ -8,7 +8,7 @@ import { readTreasury, validateAllocation, DEFAULT_ALLOCATION, ALLOCATION_LABELS
 import { isAddress } from '../js/solana/wallet.js';
 import { el, pct } from '../js/ui/ui.js';
 
-let cfg = { version: 1, announcements: [], events: [], crates: {}, rewards: { paused: true, legalReviewRef: '' }, solana: { cluster: 'mainnet-beta', rpcUrl: 'https://api.mainnet-beta.solana.com', treasuryAddress: '', tokenMint: '', feeSource: '', allocation: { ...DEFAULT_ALLOCATION } } };
+let cfg = { version: 1, announcements: [], events: [], crates: {}, collector: { live: false, endpoint: '', season: '', instantOdds: 0, supply: { legendary: 0, epic: 0, rare: 0 }, raffleDate: '' }, rewards: { paused: true, legalReviewRef: '' }, solana: { cluster: 'mainnet-beta', rpcUrl: 'https://api.mainnet-beta.solana.com', treasuryAddress: '', tokenMint: '', feeSource: '', allocation: { ...DEFAULT_ALLOCATION } } };
 let treasury = null, sim = null;
 const app = document.getElementById('app'), statusEl = document.getElementById('status');
 const input = (value, on, attrs = {}) => el('input', { value: value ?? '', oninput: (e) => { on(e.target.value); refreshStatus(); }, ...attrs });
@@ -22,6 +22,11 @@ export function problems(c) {
   if (c.solana.rpcUrl && !/^https:\/\//.test(c.solana.rpcUrl)) out.push('RPC URL must start with https://');
   if (c.rewards.paused === false && !c.rewards.legalReviewRef) out.push('Distributions cannot be un-paused without a legal review reference. The game will keep them paused.');
   if (c.rewards.paused === false && !c.solana.treasuryAddress) out.push('Distributions are un-paused but no treasury is configured.');
+  const k = c.collector || {};
+  if (k.live && c.rewards.paused !== false) out.push('Collector season is marked live but distributions are paused. The game will keep it off.');
+  if (k.live && !/^https:\/\//.test(k.endpoint || '')) out.push('Collector season needs a reward service endpoint (https) before it can go live.');
+  if (+k.instantOdds > 0.01) out.push('Instant-win odds are capped at 1% per crate by the game.');
+  if (k.live && !(k.supply.legendary + k.supply.epic + k.supply.rare)) out.push('Collector season is live with zero cards in supply.');
   c.events.forEach((e, i) => { if (!e.name) out.push(`Event ${i + 1} has no name.`); if (isNaN(Date.parse(e.start)) || isNaN(Date.parse(e.end))) out.push(`Event ${i + 1} has an invalid date.`); else if (Date.parse(e.end) <= Date.parse(e.start)) out.push(`Event ${i + 1} ends before it starts.`); if (+e.fortune > 0.2) out.push(`Event ${i + 1}: Fortune bonus is capped at 20% by the game.`); });
   for (const id in c.crates) for (const key of ['odds', 'last']) { const t = c.crates[id][key]; if (t && Math.abs(Object.values(t).reduce((a, b) => a + +b, 0) - 1) > 1e-6) out.push(`${CRATES[id].name}: ${key === 'last' ? 'last-card ' : ''}odds add up to ${pct(Object.values(t).reduce((a, b) => a + +b, 0))}, not 100%.`); }
   return out;
@@ -66,6 +71,20 @@ function render() {
       field('Status', (() => { const sel = el('select', { onchange: (e) => { cfg.rewards.paused = e.target.value === 'paused'; refreshStatus(); } }, el('option', { value: 'paused' }, 'Paused'), el('option', { value: 'live' }, 'Live')); sel.value = cfg.rewards.paused === false ? 'live' : 'paused'; return sel; })()),
       field('Legal review reference (document, date, counsel)', input(cfg.rewards.legalReviewRef, (v) => { cfg.rewards.legalReviewRef = v; }))),
     el('p', { class: 'note' }, 'Distribution log and suspicious-activity queue: these need the reward service and its ledger. Until then there is nothing to review, because no assets are distributed.')));
+
+  // ── Collector season
+  const k = cfg.collector;
+  app.append(el('h2', {}, '2b · Collector season (real cards)'), el('div', { class: 'card-box' },
+    el('p', { class: 'note' }, 'Boss Collector Crates always give Crypt Shards. A season adds a very small instant-win chance per crate and an end-of-season raffle among shard holders. Supply is fixed here, so total payouts do not grow with the number of players; set it from what the treasury card budget above can actually fund. The game only shows these values: wins are decided and capped by the reward service.'),
+    el('div', { class: 'cols' },
+      field('Status', (() => { const sel = el('select', { onchange: (e) => { k.live = e.target.value === 'live'; refreshStatus(); } }, el('option', { value: 'off' }, 'Off'), el('option', { value: 'live' }, 'Live')); sel.value = k.live ? 'live' : 'off'; return sel; })()),
+      field('Season name', input(k.season, (v) => { k.season = v; })),
+      field('Reward service endpoint (https)', input(k.endpoint, (v) => { k.endpoint = v.trim(); })),
+      field('Instant-win odds per crate (0–0.01)', input(k.instantOdds, (v) => { k.instantOdds = +v; }, { type: 'number', min: 0, max: 0.01, step: 0.0001 })),
+      field('Legendary supply', input(k.supply.legendary, (v) => { k.supply.legendary = +v; }, { type: 'number', min: 0 })),
+      field('Epic supply', input(k.supply.epic, (v) => { k.supply.epic = +v; }, { type: 'number', min: 0 })),
+      field('Rare supply', input(k.supply.rare, (v) => { k.supply.rare = +v; }, { type: 'number', min: 0 })),
+      field('Raffle date', input((k.raffleDate || '').slice(0, 10), (v) => { k.raffleDate = v; }, { type: 'date' })))));
 
   // ── Events
   const evBox = el('div', { class: 'card-box' }, el('p', { class: 'note' }, 'Scheduled events add Fortune for every player during their window (maximum 20% per event; total Fortune is capped at ' + pct(FORTUNE_CAP, 0) + ').'));
@@ -131,7 +150,7 @@ function simulate(id) {
 }
 function load(raw) {
   const clean = sanitizeConfig(raw);
-  cfg = { version: 1, announcements: clean.announcements, events: clean.events, crates: clean.crates, rewards: { paused: raw.rewards ? raw.rewards.paused !== false : true, legalReviewRef: clean.rewards.legalReviewRef }, solana: clean.solana };
+  cfg = { version: 1, announcements: clean.announcements, events: clean.events, crates: clean.crates, collector: { ...clean.collector, live: !!(raw.collector && raw.collector.live) }, rewards: { paused: raw.rewards ? raw.rewards.paused !== false : true, legalReviewRef: clean.rewards.legalReviewRef }, solana: clean.solana };
   render();
   if (clean.problems.length) alert('Some values were dropped:\n' + clean.problems.join('\n'));
 }

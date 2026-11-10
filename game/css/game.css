@@ -222,3 +222,6 @@ body.landscape-touch #app { justify-content: center; }
 body.floatcmd #commands .wide { grid-column: span 2; } body.floatcmd #commands .full { grid-column: 1 / -1; }
 body.floatcmd #commands .mv small { flex-direction: column; line-height: 1.05; }
 body.floatcmd .bh.me { top: calc(var(--u) * 80); }
+.shardwin { z-index: 2; text-align: center; animation: dealin .45s ease-out both; padding: 0 16px; }
+.shardwin .gem { font-size: 96px; line-height: 1; color: var(--cyan); text-shadow: 0 0 30px #70e8f0aa, 0 6px 0 #1c4c58; }
+.shardwin .amt { font-size: 40px; color: var(--gold2); margin: 6px 0; } .shardwin .sub { font-size: 20px; color: var(--parch2); max-width: 520px; margin: 4px auto; }

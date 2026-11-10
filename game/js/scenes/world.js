@@ -11,6 +11,7 @@ import { drawCharAt } from '../render/chars.js';
 import { createMon, healMon, nameOf } from '../systems/monster.js';
 import { addCard, checkConstellations } from '../systems/crypt.js';
 import { clock, weatherFor, cachesFor, dailyTick, rollDaily } from '../systems/state.js';
+import { bankAccrue } from '../systems/economy.js';
 import { heldDir, isHeld, onKey, clearHeld } from '../core/input.js';
 import { sfx, music } from '../core/audio.js';
 import { say, choose, toast, banner, busy, $, el, sleep } from '../ui/ui.js';
@@ -247,6 +248,7 @@ export class World {
     hud.innerHTML = '';
     const wx = this.weather ? ' · ' + WX_LABEL[this.weather] : '';
     hud.append(el('span', { class: 'chip' }, `${this.map.indoor ? '' : c.night ? '☾ ' : c.dusk ? '◐ ' : '☀ '}${this.map.name}${wx}`));
+    hud.append(el('span', { class: 'chip', style: { marginLeft: 'auto', marginRight: d != null ? 'calc(var(--u) * 3)' : 0 } }, el('b', {}, '◉ ' + this.s.coins.toLocaleString())));
     if (d != null) { const lvl = d <= 2 ? 'ringing' : d <= 5 ? 'humming' : 'faint'; hud.append(el('span', { class: 'chip compass hot', style: { '--beat': d <= 2 ? '.35s' : d <= 5 ? '.8s' : '1.8s' } }, el('b', {}, '◈'), lvl)); }
   }
 
@@ -269,6 +271,7 @@ export class World {
       async give(item, n = 1) { G.s.bag[item] = (G.s.bag[item] || 0) + n; sfx('item'); await say(`You got ${n > 1 ? n + ' × ' : 'a '}${ITEMS[item].name}${n > 1 ? '' : ''}!`); },
       async coins(n) { G.s.coins += n; sfx('coin'); await say(`You got ${n} coins.`); },
       async giveCrate(id, n = 1) { G.s.crates[id] = (G.s.crates[id] || 0) + n; sfx('fanfare'); await say(`You received ${n > 1 ? n + ' × ' : 'a '}${CRATES[id].name}! Open it from the CRYPT menu.`); },
+      async giveCollector(n = 1) { G.s.crates.collector = (G.s.crates.collector || 0) + n; sfx('r_epic'); await say(`You received ${n > 1 ? n + ' × ' : 'a '}Collector Crate! Boss crates hold Crypt Shards for the season raffle and a very small chance of a real collector CRYPT card.`); },
       async giveCard(id) {
         const isNew = addCard(G.s.col, id);
         sfx(isNew ? 'r_rare' : 'item');
@@ -324,7 +327,7 @@ export class World {
   async whiteout() {
     const s = this.s;
     const lost = Math.floor(s.coins * 0.1); s.coins -= lost;
-    await say(`Your Kith can't go on. You hurry back to the last Hearth${lost ? `, dropping ${lost} coins on the way` : ''}.`);
+    await say(`Your Kith can't go on. You hurry back to the last Hearth${lost ? `, dropping ${lost} coins on the way` : ''}.${lost && !(s.bank && s.bank.coins) ? ' Coins kept in the Lantern Bank are never lost.' : ''}`);
     for (const m of s.party) healMon(m);
     await this.fadeTo(1);
     this.load(s.lastHeal.map); Object.assign(s, { x: s.lastHeal.x, y: s.lastHeal.y, dir: 'down' }); this.move = null;
@@ -405,6 +408,8 @@ export class World {
 }
 export function startWorld() {
   rollDaily(G.s);
+  const interest = bankAccrue(G.s);
+  if (interest) setTimeout(() => toast(`Lantern Bank: +${interest.toLocaleString()} coins interest while you were away.`), 1500);
   if (!G.world) G.world = new World();
   G.scene = 'world';
   G.world.load(G.s.map, true);

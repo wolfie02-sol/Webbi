@@ -80,3 +80,16 @@ test('Fortune is capped and ignores anything not earned by play', () => {
   assert.equal(f.total, FORTUNE_CAP);
   assert.equal(fortuneParts({}).total, 0);
 });
+test('Collector Crate: always shards, never a card on the client; seasons cannot go live without safeguards', async () => {
+  const { openCollector } = await import('../js/systems/crypt.js');
+  const { sanitizeConfig } = await import('../js/config.js');
+  const col = newCollection(); let total = 0;
+  for (let i = 1; i <= 2000; i++) { const r = openCollector(col, { seed: i }); assert.ok(r.shards >= 1 && r.shards <= 5); assert.equal(r.card, null); total += r.shards; }
+  assert.equal(col.shards, total); assert.equal(col.collectorOpened, 2000);
+  assert.ok(total / 2000 > 1.6 && total / 2000 < 2.0, 'average about 1.8 shards');
+  const want = { live: true, endpoint: 'https://rewards.example', instantOdds: 0.5, supply: { legendary: 10 } };
+  assert.equal(sanitizeConfig({ collector: want }).collector.live, false, 'paused distributions keep the season off');
+  const ok = sanitizeConfig({ collector: want, rewards: { paused: false, legalReviewRef: 'Memo' } }).collector;
+  assert.equal(ok.live, true); assert.equal(ok.instantOdds, 0.01, 'instant-win odds are clamped to 1%');
+  assert.equal(sanitizeConfig({ collector: { ...want, endpoint: '' }, rewards: { paused: false, legalReviewRef: 'Memo' } }).collector.live, false);
+});

@@ -7,7 +7,8 @@ export const SAVE_KEY = 'cryptwild.save.v1';
 export const SAVE_VERSION = 1;
 
 export function newState() {
-  return {
+  const now = new Date(), today = Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 864e5 + 0.5);
+  const s = {
     v: SAVE_VERSION, name: 'Warden', starter: null,
     map: 'lanternrest', x: 6, y: 5, dir: 'down',
     party: [], box: [], bag: {}, coins: 500,
@@ -15,9 +16,11 @@ export function newState() {
     badges: 0, badgesRematch: 0, dug: 0, steps: 0, playMs: 0,
     col: newCollection(), crates: {},
     daily: { date: '', quests: [], claimed: false, crate: false, streak: 0, dugToday: {} },
-    tower: { best: 0 }, lastHeal: { map: 'lanternrest', x: 6, y: 5 },
+    bank: { coins: 0, day: 0, earned: 0 }, tower: { best: 0 }, lastHeal: { map: 'lanternrest', x: 6, y: 5 },
     wallet: null, settings: { sfx: true, music: true, fast: false }, debug: {},
   };
+  s.bank.day = today;
+  return s;
 }
 const checksum = (s) => hashStr(s).toString(36);
 export function serialize(state) {
@@ -77,7 +80,7 @@ export function rollDaily(state, date = new Date()) {
   if (d.date === key) return false;
   const y = new Date(date); y.setDate(y.getDate() - 1);
   d.streak = d.date === dayKey(y) ? d.streak + 1 : 1;
-  d.date = key; d.claimed = false; d.crate = false; d.dugToday = {};
+  d.date = key; d.claimed = false; d.crate = false; d.dugToday = {}; d.bazaar = {};
   const r = makeRng(hashStr('daily:' + key));
   const pool = DAILY_POOL.filter((q) => (q.type !== 'tower' || state.flags.story_done) && (q.type !== 'dig' || state.bag.compass));
   const picks = [];

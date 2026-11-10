@@ -29,3 +29,9 @@ for (const k in CRATES) CRATES[k].id = k;
 export const CRATE_IDS = Object.keys(CRATES);
 export const LEGEND_PITY = 400; // cards since the last Legendary-or-better before one is guaranteed
 export const FORTUNE_CAP = 0.6;
+
+// Collector Crate: earned from bosses only. Always gives Crypt Shards (raffle entries). When a collector
+// season is live it also carries a very small chance of a real collector CRYPT card; that roll is made by
+// the reward service from on-chain randomness, never on the player's device.
+export const COLLECTOR = { id: 'collector', name: 'Collector Crate', color: '#70e8f0', shards: [[1, 50], [2, 30], [3, 15], [5, 5]],
+  desc: 'Earned from bosses. Holds Crypt Shards for the season raffle and, when a season is live, a very small chance of a real collector CRYPT card.' };

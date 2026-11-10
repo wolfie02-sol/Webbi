@@ -65,7 +65,7 @@ export const STORY = {
     await g.fanfare(`You received the ${L.sigil}!`);
     await g.say(L.name, L.after);
     await g.giveCard(L.card); await g.giveCard(L.own);
-    await g.giveCrate('golden');
+    await g.giveCrate('golden'); await g.giveCollector();
     if (n === 3) await g.give('presspass');
     if (n === 4) await g.give('cryptkey');
   },
@@ -80,7 +80,7 @@ export const STORY = {
     g.set('murk_done');
     await g.say(R, 'Curator Vane will hear about this. Not from me. I\'m going to say I fell in a river.');
     await g.say('Rook drops the net, a mask and a blank card, and runs. The Sparkit shakes itself, sparks once at you in thanks, and vanishes into the wood.');
-    await g.giveCard('a-mask'); await g.giveCard('a-blankcard');
+    await g.giveCard('a-mask'); await g.giveCard('a-blankcard'); await g.giveCollector();
   },
   async haleAfter(g) {
     const H = 'Ranger Hale';
@@ -125,7 +125,7 @@ export const STORY = {
     await g.say(S, 'It doesn\'t matter. This was the small press. The Curator has gone to the Sunken Crypt for Mnemora, the first Kith. Press that, and every memory it keeps is ours. He asked me to tell whoever beat me. He thinks you\'ll agree with him, in the end.');
     await g.say('You throw the lever. The cages open. Four hundred and twelve Kith pour out into Ashenforge, and one small Mindle stays behind, looking up at you.');
     await g.giveMon('mindle', 28);
-    await g.giveCard('c-sable'); await g.giveCard('a-stamp'); await g.give('duskshard'); await g.giveCrate('golden');
+    await g.giveCard('c-sable'); await g.giveCard('a-stamp'); await g.give('duskshard'); await g.giveCrate('golden'); await g.giveCollector();
   },
 
   async vane(g) {
@@ -144,7 +144,7 @@ export const STORY = {
     await g.say('Mnemora turns to you. You understand, without words: the cards were never meant to hold Kith. They were meant to hold the door open.');
     g.set('story_done');
     await g.fanfare('The Crypts are open to everyone.');
-    await g.giveCard('c-vane'); await g.giveCard('a-key'); await g.giveCrate('legendary');
+    await g.giveCard('c-vane'); await g.giveCard('a-key'); await g.giveCrate('legendary'); await g.giveCollector(2);
     await g.credits();
     await g.say('Vane has gone. On the altar he has left a Dawn Shard and a note: "For the next Glimmet you meet."');
     await g.give('dawnshard');
@@ -173,9 +173,9 @@ export const STORY = {
     if (first) {
       g.set('champion');
       await g.fanfare('You are the Champion of Vael!');
-      await g.giveCrate('mythic');
+      await g.giveCrate('mythic'); await g.giveCollector(2);
       await g.say('Word is spreading. Something has surfaced at the end of Saltgate pier, and the ground on Cinder Steppe is warm in a new place.');
-    } else await g.giveCrate('legendary');
+    } else { await g.giveCrate('legendary'); await g.giveCollector(); }
     await g.hearth(true, true);
   },
 
@@ -196,6 +196,7 @@ export const STORY = {
       if (!won) { floor--; break; }
       g.dailyTick('tower');
       if (floor % 5 === 0) await g.giveCrate(floor % 25 === 0 ? 'legendary' : floor % 15 === 0 ? 'shadow' : floor % 10 === 0 ? 'golden' : 'silver');
+      if (floor % 10 === 0) await g.giveCollector();
       if (floor === 10 && !g.has('bell')) { g.set('bell'); await g.giveCard('a-bell'); }
       const go = await g.choose(`Floor ${floor} cleared.`, ['Next floor', 'Leave the tower']);
       if (go !== 0) break;

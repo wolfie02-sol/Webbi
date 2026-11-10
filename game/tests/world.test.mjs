@@ -69,3 +69,29 @@ test('save round-trip, tamper detection, daily and weather', () => {
   let aur = 0; for (let i = 0; i < 400; i++) if (weatherFor(s, 'frostspire', i * 360000) === 'aurora') aur++;
   assert.ok(aur > 20 && aur < 120, 'aurora is rare but real: ' + aur);
 });
+test('economy: bank interest, selling, daily bazaar', async () => {
+  const { bankAccrue, bankMove, sellItem, sellPrice, bazaarFor, buyOffer, netWorth, BANK } = await import('../js/systems/economy.js');
+  const s = newState(); rollDaily(s, new Date(2026, 10, 9));
+  s.coins = 50000; bankAccrue(s, new Date(2026, 10, 9));
+  assert.equal(bankMove(s, 40000), 40000); assert.equal(bankMove(s, 999999), 10000, 'cannot deposit more than carried');
+  assert.equal(s.coins, 0); assert.equal(netWorth(s), 50000);
+  assert.equal(bankAccrue(s, new Date(2026, 10, 9)), 0, 'no interest the same day');
+  assert.equal(bankAccrue(s, new Date(2026, 10, 10)), 500);
+  assert.equal(bankAccrue(s, new Date(2026, 10, 10)), 0, 'cannot be claimed twice');
+  s.bank.coins = 10_000_000; assert.equal(bankAccrue(s, new Date(2026, 10, 11)), BANK.dailyCap, 'daily cap');
+  s.bank.coins = 1000; const far = bankAccrue(s, new Date(2028, 0, 1)); assert.ok(far <= 30 * BANK.dailyCap && far > 0, 'catch-up is bounded');
+  assert.equal(bankAccrue(s, new Date(2026, 0, 1)), 0, 'setting the clock back earns nothing');
+  const held = s.bank.coins; assert.equal(bankMove(s, -99999999), -held, 'cannot withdraw more than banked'); assert.equal(s.bank.coins, 0);
+  s.bag = { salve: 3, compass: 1, luckcharm: 1, nugget: 1 };
+  assert.equal(sellPrice('compass'), 0); assert.equal(sellPrice('luckcharm'), 0);
+  const before = s.coins; assert.equal(sellItem(s, 'salve', 5), 90); assert.equal(sellItem(s, 'nugget'), 800); assert.equal(sellItem(s, 'compass'), 0);
+  assert.equal(s.coins, before + 890); assert.equal(s.bag.salve, undefined); assert.equal(s.bag.compass, 1);
+  const day = new Date(2026, 10, 9), offers = bazaarFor(s, day);
+  assert.equal(offers.length, 5); assert.deepEqual(bazaarFor(newState(), day), offers, 'same for every player');
+  assert.notDeepEqual(bazaarFor(s, new Date(2026, 10, 12)).map((o) => o.label), offers.map((o) => o.label));
+  s.coins = 1_000_000;
+  for (let i = 0; i < offers.length; i++) { for (let k = 0; k < offers[i].limit; k++) assert.equal(buyOffer(s, i, day), true); assert.equal(buyOffer(s, i, day), false, 'limit enforced'); }
+  assert.ok(s.col.cards[offers[1].id].n === 1 && s.col.dust === 300 && s.crates.silver === 1);
+  s.coins = 0; s.daily.bazaar = {}; assert.equal(buyOffer(s, 0, day), false, 'cannot buy without coins');
+  for (const o of offers) assert.ok(!['collector'].includes(o.id) && o.kind !== 'shards', 'coins never buy raffle entries');
+});

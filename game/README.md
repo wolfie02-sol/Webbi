@@ -31,7 +31,7 @@ python3 -m http.server 8000      # from the repository root
 
 ```bash
 cd game
-npm test          # 22 unit tests: data integrity, 1,500 simulated battles, odds, pity, map reachability, save, config
+npm test          # 24 unit tests: data integrity, 1,500 simulated battles, odds, pity, map reachability, save, config
 npm run smoke     # end-to-end in Chromium (needs Playwright): plays the whole story, opens every crate type
 ```
 

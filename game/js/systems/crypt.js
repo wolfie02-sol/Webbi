@@ -1,7 +1,7 @@
 // CRYPT engine: odds, Fortune, pity, rolling, Dust, constellations. Pure; randomness is injected so the
 // same code can run from a verifiable seed on a server.
 import { CARDS, RARITIES, RARITY, CONSTELLATIONS } from '../data/cards.js';
-import { CRATES, LEGEND_PITY, FORTUNE_CAP } from '../data/crates.js';
+import { CRATES, LEGEND_PITY, FORTUNE_CAP, COLLECTOR } from '../data/crates.js';
 import { makeRng } from '../core/rng.js';
 
 const rank = (r) => RARITIES.indexOf(r);
@@ -76,7 +76,7 @@ export function addCard(col, id, prism = false) {
   e.n++; if (prism) e.prism++;
   return isNew;
 }
-export function newCollection() { return { cards: {}, dust: 0, pity: {}, pityLegend: 0, log: [], opened: 0, stars: [] }; }
+export function newCollection() { return { cards: {}, dust: 0, shards: 0, collectorOpened: 0, pity: {}, pityLegend: 0, log: [], opened: 0, stars: [] }; }
 export const owned = (col, id) => (col.cards[id] ? col.cards[id].n : 0);
 
 export function refine(col, id, keep = 1) {
@@ -127,4 +127,16 @@ export function fortuneParts(s, eventBonus = 0, aurora = false) {
   ];
   const raw = parts.reduce((a, p) => a + p.value, 0);
   return { parts, total: Math.min(FORTUNE_CAP, raw), capped: raw > FORTUNE_CAP };
+}
+
+// Collector Crate, client side: shards only. A real collector card can only be awarded by the reward
+// service (see docs/SOLANA_ARCHITECTURE.md), so this function can never return one.
+export function openCollector(col, { seed, date = new Date() } = {}) {
+  const rng = makeRng(seed);
+  const shards = rng.weighted(COLLECTOR.shards);
+  col.shards = (col.shards || 0) + shards;
+  col.collectorOpened = (col.collectorOpened || 0) + 1;
+  col.log.unshift({ t: date.getTime(), crate: 'collector', seed, fortune: 0, cards: [], shards });
+  col.log.length = Math.min(col.log.length, 60);
+  return { shards, card: null };
 }

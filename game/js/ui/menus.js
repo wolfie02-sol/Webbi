@@ -12,6 +12,8 @@ import { serialize, deserialize, saveGame, clock } from '../systems/state.js';
 import { sfx, setAudio } from '../core/audio.js';
 import { panel, el, say, choose, toast, pct, setTextFast } from './ui.js';
 import { evolveScene } from '../scenes/battle.js';
+import { BANK, bankAccrue, bankMove, sellPrice, sellItem, bazaarFor, buyOffer, netWorth } from '../systems/economy.js';
+import { CARDS } from '../data/cards.js';
 
 export const typePill = (t) => el('span', { class: 'pill', style: { background: TYPES[t].color } }, TYPES[t].name);
 const hpBar = (mon) => { const max = statsOf(mon).hp, f = mon.hp / max; return el('div', { class: 'bar' }, el('i', { style: { width: f * 100 + '%', background: f > 0.5 ? 'var(--hp)' : f > 0.2 ? 'var(--hpmid)' : 'var(--hplow)' } })); };
@@ -26,7 +28,7 @@ export const Menus = {
     return panel('Menu', (body, api) => {
       const s = G.s, f = G.fortune();
       body.append(el('div', { class: 'tabs', style: { justifyContent: 'center' } },
-        el('span', { class: 'chip' }, el('b', {}, s.coins), ' coins'), el('span', { class: 'chip' }, el('b', {}, s.badges), ' / 4 Sigils'),
+        el('span', { class: 'chip' }, el('b', {}, '◉ ' + s.coins.toLocaleString()), ' coins'), s.bank.coins ? el('span', { class: 'chip' }, el('b', {}, s.bank.coins.toLocaleString()), ' banked') : null, el('span', { class: 'chip' }, el('b', {}, s.badges), ' / 4 Sigils'),
         el('span', { class: 'chip' }, 'Fortune ', el('b', {}, '+' + pct(f.total, 0))), el('span', { class: 'chip' }, playtime(s.playMs))));
       const tile = (ic, label, sub, fn, cls = '') => el('button', { class: 'tile ' + cls, onclick: async () => { sfx('select'); await fn(); api.redraw(); } }, el('span', { class: 'ic' }, ic), label, el('small', {}, sub));
       const crates = Object.values(s.crates).reduce((a, b) => a + b, 0);
@@ -172,18 +174,46 @@ export const Menus = {
   },
 
   shop() {
+    bankAccrue(G.s);
     return panel('Market', (body, api) => {
-      const s = G.s;
-      const stock = ['salve', 'lantern', 'remedy', ...(s.badges >= 1 ? ['tonic', 'brightlantern'] : []), ...(s.badges >= 2 ? ['rekindle', 'dusklantern', 'ppseed'] : []), ...(s.badges >= 3 ? ['elixir'] : []), ...(s.badges >= 4 ? ['fullrestore', 'dawnshard', 'duskshard'] : [])];
-      body.append(el('div', { class: 'tabs' }, el('span', { class: 'chip' }, el('b', {}, s.coins), ' coins')));
-      for (const id of stock) {
-        const it = ITEMS[id];
-        const buy = (n) => el('button', { class: 'btn' + (n > 1 ? ' alt' : ''), disabled: s.coins < it.price * n, onclick: () => { s.coins -= it.price * n; s.bag[id] = (s.bag[id] || 0) + n; sfx('coin'); api.focusSel = `[data-buy="${id}-${n}"]`; api.redraw(); }, 'data-buy': `${id}-${n}` }, n > 1 ? `×${n}` : `${it.price}`);
-        body.append(el('div', { class: 'row-item' }, el('div', { class: 'grow' }, `${it.name}${s.bag[id] ? `  (have ${s.bag[id]})` : ''}`, el('small', {}, it.desc)), buy(1), buy(5)));
+      const s = G.s, tab = api.tab || 'buy';
+      const tabs = [['buy', 'Buy'], ['sell', 'Sell'], ['bazaar', 'Daily Bazaar'], ['bank', 'Lantern Bank']];
+      body.append(el('div', { class: 'tabs' }, ...tabs.map(([id, label]) => el('button', { class: tab === id ? 'on' : '', 'data-tab': id, onclick: () => { api.tab = id; api.focusSel = `[data-tab="${id}"]`; sfx('blip'); api.redraw(); } }, label)),
+        el('span', { class: 'chip' }, el('b', {}, '◉ ' + s.coins.toLocaleString()), ' carried'), el('span', { class: 'chip' }, el('b', {}, s.bank.coins.toLocaleString()), ' banked')));
+      if (tab === 'buy') {
+        const stock = ['salve', 'lantern', 'remedy', ...(s.badges >= 1 ? ['tonic', 'brightlantern'] : []), ...(s.badges >= 2 ? ['rekindle', 'dusklantern', 'ppseed'] : []), ...(s.badges >= 3 ? ['elixir'] : []), ...(s.badges >= 4 ? ['fullrestore', 'dawnshard', 'duskshard'] : [])];
+        for (const id of stock) {
+          const it = ITEMS[id];
+          const buy = (n) => el('button', { class: 'btn' + (n > 1 ? ' alt' : ''), disabled: s.coins < it.price * n, onclick: () => { s.coins -= it.price * n; s.bag[id] = (s.bag[id] || 0) + n; sfx('coin'); api.focusSel = `[data-buy="${id}-${n}"]`; api.redraw(); }, 'data-buy': `${id}-${n}` }, n > 1 ? `×${n}` : `${it.price}`);
+          body.append(el('div', { class: 'row-item' }, el('div', { class: 'grow' }, `${it.name}${s.bag[id] ? `  (have ${s.bag[id]})` : ''}`, el('small', {}, it.desc)), buy(1), buy(5)));
+        }
+        body.append(el('p', { class: 'note' }, 'More goods arrive as you earn Sigils.'));
       }
-      const sell = Object.keys(s.bag).filter((id) => ITEMS[id].sell && s.bag[id] > 0);
-      for (const id of sell) body.append(el('div', { class: 'row-item' }, el('div', { class: 'grow' }, `${ITEMS[id].name} ×${s.bag[id]}`, el('small', {}, 'The shopkeeper will buy this.')), el('button', { class: 'btn', onclick: () => { s.bag[id]--; if (!s.bag[id]) delete s.bag[id]; s.coins += ITEMS[id].sell; sfx('coin'); api.redraw(); } }, `Sell +${ITEMS[id].sell}`)));
-      body.append(el('p', { class: 'note' }, 'More goods arrive as you earn Sigils. Everything here costs coins earned in play; nothing in Cryptwild is sold for real money.'));
+      if (tab === 'sell') {
+        const ids = Object.keys(s.bag).filter((id) => s.bag[id] > 0 && sellPrice(id) > 0);
+        if (!ids.length) body.append(el('p', { class: 'note' }, 'You have nothing the shopkeeper will buy.'));
+        for (const id of ids) body.append(el('div', { class: 'row-item' }, el('div', { class: 'grow' }, `${ITEMS[id].name} ×${s.bag[id]}`, el('small', {}, `Sells for ${sellPrice(id)} each`)),
+          el('button', { class: 'btn', 'data-sell': id, onclick: () => { sellItem(s, id, 1); sfx('coin'); api.focusSel = `[data-sell="${id}"]`; api.redraw(); } }, `Sell 1`),
+          s.bag[id] > 1 ? el('button', { class: 'btn alt', onclick: () => { sellItem(s, id, s.bag[id]); sfx('coin'); api.redraw(); } }, `Sell all`) : null));
+      }
+      if (tab === 'bazaar') {
+        body.append(el('p', { class: 'note' }, 'Five offers that change every day, the same for every Warden. Limits reset at midnight.'));
+        const bought = s.daily.bazaar || {};
+        bazaarFor(s).forEach((o, i) => { const left = o.limit - (bought[i] || 0); body.append(el('div', { class: 'row-item' }, el('div', { class: 'grow' }, o.label, el('small', {}, `${o.note} · ${left} left today`)),
+          el('button', { class: 'btn', disabled: left <= 0 || s.coins < o.price, 'data-offer': i, onclick: () => { if (buyOffer(s, i)) { sfx('coin'); if (o.kind === 'card') toast(`${CARDS[o.id].name} added to your binder.`); api.focusSel = `[data-offer="${i}"]`; api.redraw(); } } }, left <= 0 ? 'Sold out' : `◉ ${o.price.toLocaleString()}`))); });
+      }
+      if (tab === 'bank') {
+        const b = s.bank, next = Math.min(BANK.dailyCap, Math.floor(b.coins * BANK.rate));
+        body.append(el('div', { class: 'card-box' }, el('h3', {}, 'Lantern Bank'),
+          el('dl', { class: 'kv' }, el('dt', {}, 'Carried'), el('dd', {}, s.coins.toLocaleString()), el('dt', {}, 'Banked'), el('dd', {}, b.coins.toLocaleString()), el('dt', {}, 'Interest tomorrow'), el('dd', {}, '+' + next.toLocaleString()), el('dt', {}, 'Interest earned so far'), el('dd', {}, (b.earned || 0).toLocaleString())),
+          el('div', { class: 'btnrow' },
+            ...[1000, 10000].map((n) => el('button', { class: 'btn', disabled: s.coins < 1, 'data-dep': n, onclick: () => { bankMove(s, n); sfx('coin'); api.focusSel = `[data-dep="${n}"]`; api.redraw(); } }, `Deposit ${n.toLocaleString()}`)),
+            el('button', { class: 'btn', disabled: s.coins < 1, 'data-dep': 'all', onclick: () => { bankMove(s, s.coins); sfx('coin'); api.focusSel = '[data-dep="all"]'; api.redraw(); } }, 'Deposit all'),
+            el('button', { class: 'btn alt', disabled: b.coins < 1, 'data-wd': 1000, onclick: () => { bankMove(s, -1000); sfx('coin'); api.focusSel = '[data-wd="1000"]'; api.redraw(); } }, 'Withdraw 1,000'),
+            el('button', { class: 'btn alt', disabled: b.coins < 1, onclick: () => { bankMove(s, -b.coins); sfx('coin'); api.redraw(); } }, 'Withdraw all')),
+          el('p', { class: 'note' }, `Banked coins earn ${BANK.rate * 100}% each real day (up to ${BANK.dailyCap.toLocaleString()} a day, and up to ${BANK.maxDays} days while you are away). If your Kith all faint you drop a tenth of the coins you carry; banked coins are safe. Every Market in Vael has a bank window.`)));
+      }
+      body.append(el('p', { class: 'note' }, 'Coins are earned in play: battles, quests, caches, selling and bank interest. They cannot be bought with real money, cashed out, or spent on Collector Crates or raffle shards.'));
     });
   },
 

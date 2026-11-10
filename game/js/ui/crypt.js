@@ -1,9 +1,9 @@
 // CRYPT interface: binder, card detail, crates with published odds, opening sequence, Dust, Constellations.
 import { G, kithCanvas } from '../game.js';
 import { CARDS, RARITY, RARITIES, CONSTELLATIONS, ART } from '../data/cards.js';
-import { CRATES, CRATE_IDS, LEGEND_PITY, FORTUNE_CAP } from '../data/crates.js';
+import { CRATES, CRATE_IDS, LEGEND_PITY, FORTUNE_CAP, COLLECTOR } from '../data/crates.js';
 import { TYPES } from '../data/types.js';
-import { effectiveOdds, openCrate, owned, refine, refineAll, craft, checkConstellations, collectionStats } from '../systems/crypt.js';
+import { effectiveOdds, openCrate, openCollector, owned, refine, refineAll, craft, checkConstellations, collectionStats } from '../systems/crypt.js';
 import { dailyTick } from '../systems/state.js';
 import { secureSeed } from '../core/rng.js';
 import { toCanvas } from '../render/pixel.js';
@@ -49,10 +49,11 @@ export const Crypt = {
     return panel('CRYPT', (body, api) => {
       const s = G.s, col = s.col, f = G.fortune(), st = collectionStats(col);
       const tab = api.tab || 'crates';
-      const tabs = [['crates', 'Crates'], ['binder', 'Binder'], ['stars', 'Constellations'], ['fortune', 'Fortune & odds'], ['log', 'History']];
+      const tabs = [['crates', 'Crates'], ['collector', 'Collector cards'], ['binder', 'Binder'], ['stars', 'Constellations'], ['fortune', 'Fortune & odds'], ['log', 'History']];
       body.append(el('div', { class: 'tabs' }, ...tabs.map(([id, label]) => el('button', { class: tab === id ? 'on' : '', 'data-tab': id, onclick: () => { api.tab = id; api.focusSel = `[data-tab="${id}"]`; sfx('blip'); api.redraw(); } }, label)),
-        el('span', { class: 'chip' }, el('b', {}, `${st.have}/${st.total}`), ' cards'), el('span', { class: 'chip' }, el('b', {}, col.dust), ' Dust'), el('span', { class: 'chip' }, 'Fortune ', el('b', {}, '+' + pct(f.total, 0)))));
+        el('span', { class: 'chip' }, el('b', {}, `${st.have}/${st.total}`), ' cards'), el('span', { class: 'chip' }, el('b', {}, col.dust), ' Dust'), el('span', { class: 'chip' }, el('b', {}, col.shards || 0), ' Shards'), el('span', { class: 'chip' }, 'Fortune ', el('b', {}, '+' + pct(f.total, 0)))));
       if (tab === 'crates') Crypt.cratesTab(body, api, f);
+      if (tab === 'collector') Crypt.collectorTab(body, api);
       if (tab === 'binder') Crypt.binderTab(body, api);
       if (tab === 'stars') Crypt.starsTab(body);
       if (tab === 'fortune') Crypt.fortuneTab(body, f);
@@ -66,6 +67,14 @@ export const Crypt = {
       body.append(el('div', { class: 'card-box' }, el('h3', {}, 'Daily crate'), el('p', { class: 'note' }, 'One free Basic Crate every day, for everyone.'),
         el('button', { class: 'btn', onclick: () => { s.daily.crate = true; s.crates.basic = (s.crates.basic || 0) + 1; sfx('fanfare'); toast('Daily Basic Crate claimed.'); api.redraw(); } }, 'Claim today\'s crate')));
     }
+    const k = G.config.collector || {}, cn = s.crates.collector || 0;
+    body.append(el('div', { class: 'crate-row', style: { '--cc': COLLECTOR.color, borderColor: COLLECTOR.color } },
+      el('div', { class: 'n' }, cn),
+      el('div', { class: 'grow' }, el('b', {}, COLLECTOR.name + ' ✦'), el('small', {}, 'Boss reward. Always gives 1 to 5 Crypt Shards for the season raffle.'),
+        el('small', {}, k.live ? `Real collector CRYPT card: ${pct(k.instantOdds)} per crate while this season's supply lasts.` : 'Real collector CRYPT card: very low odds, when a season is live. No season is live right now.')),
+      el('div', { class: 'btnrow', style: { marginTop: 0, justifyContent: 'flex-end' } },
+        el('button', { class: 'btn alt', onclick: () => { api.tab = 'collector'; api.focusSel = '[data-tab="collector"]'; api.redraw(); } }, 'How it works'),
+        el('button', { class: 'btn', disabled: !cn, 'data-open': 'collector', onclick: async () => { api.focusSel = '[data-open="collector"]'; await Crypt.openingCollector(); api.redraw(); } }, 'Open'))));
     for (const id of CRATE_IDS) {
       const c = { ...CRATES[id], ...(G.config.crates[id] || {}) }, n = s.crates[id] || 0;
       const price = c.price ? (c.price.coins ? `${c.price.coins} coins` : `${c.price.dust} Dust`) : null;
@@ -144,9 +153,53 @@ export const Crypt = {
     G.save();
   },
 
+  async openingCollector() {
+    const s = G.s, col = s.col, k = G.config.collector || {};
+    if (!s.crates.collector) return;
+    s.crates.collector--;
+    const res = openCollector(col, { seed: secureSeed() });
+    if (dailyTick(s, 'crate')) G.world.dailyDone();
+    G.save();
+    const root = el('div', { class: 'opening', style: { '--cc': COLLECTOR.color, '--rayc': '#70e8f044' } }, el('div', { class: 'rays' }));
+    const box = el('button', { class: 'crate3d' }, el('div', { class: 'glowc' }), el('div', { class: 'base' }), el('div', { class: 'lid' }));
+    const hint = el('div', { class: 'hint' }, 'Collector Crate — tap to open');
+    root.append(box, hint); $('#panels').append(root);
+    const pop = focusNav(root, null); box.focus();
+    await new Promise((r) => box.addEventListener('click', r, { once: true }));
+    hint.textContent = '';
+    for (let i = 0; i < 3; i++) { sfx('crateShake'); box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); await sleep(i === 2 ? 900 : 520); }
+    root.classList.add('lit'); box.classList.add('open'); sfx('crateOpen'); await sleep(750);
+    box.classList.add('gone'); await sleep(350); box.remove(); sfx('r_rare');
+    const tile = el('div', { class: 'shardwin' }, el('div', { class: 'gem' }, '◆'), el('div', { class: 'amt' }, `+${res.shards} Crypt Shard${res.shards > 1 ? 's' : ''}`), el('div', { class: 'sub' }, `You hold ${col.shards}. Each shard is one raffle entry.`),
+      el('div', { class: 'sub' }, k.live ? 'Collector card: not this time.' : 'Collector card drops are not live yet, so this crate held shards only.'));
+    root.insertBefore(tile, hint);
+    let finish; hint.append(el('button', { class: 'btn', onclick: () => finish() }, 'Continue')); hint.querySelector('button').focus();
+    await new Promise((r) => { finish = r; });
+    pop(); root.remove();
+  },
+  collectorTab(body) {
+    const col = G.s.col, k = G.config.collector || {}, sup = k.supply || {};
+    body.append(el('div', { class: 'card-box', style: { borderColor: COLLECTOR.color } }, el('h3', {}, 'Two kinds of card'),
+      el('p', { class: 'note' }, el('b', {}, 'Binder cards'), ' are part of the game. Everyone collects them by playing, they are generous on purpose, and they have no monetary value.'),
+      el('p', { class: 'note' }, el('b', {}, 'Collector CRYPT cards'), ' are real, numbered cards minted on Solana and paid for by the project treasury. They are rare by design: a fixed number exists each season, however many people play.')));
+    body.append(el('div', { class: 'card-box' }, el('h3', {}, 'How you can win one'),
+      el('p', { class: 'note' }, el('b', {}, '1. Collector Crates.'), ' Beat a boss (Sigil Wardens, Hollow Ledger leaders, the Concord Trial, every tenth Echo Tower floor) and you receive a Collector Crate. Every crate gives 1 to 5 Crypt Shards. When a season is live, each crate also has a very small chance of holding a collector card outright.'),
+      el('p', { class: 'note' }, el('b', {}, '2. The season raffle.'), ' At the end of a season, remaining collector cards are drawn among shard holders. One shard is one entry. The more people play, the lower each entry\'s odds; the live numbers are shown here.'),
+      el('p', { class: 'note' }, 'Collector Crates are never sold. Entry is free and earned only by playing.')));
+    body.append(el('div', { class: 'card-box' }, el('h3', {}, k.live ? `Season: ${k.season || 'current'}` : 'No season is live'),
+      el('dl', { class: 'kv' },
+        el('dt', {}, 'Your Crypt Shards'), el('dd', {}, String(col.shards || 0)),
+        el('dt', {}, 'Collector Crates opened'), el('dd', {}, String(col.collectorOpened || 0)),
+        el('dt', {}, 'Instant-win chance per crate'), el('dd', {}, k.live ? pct(k.instantOdds) : 'Not active'),
+        el('dt', {}, 'Cards this season'), el('dd', {}, k.live ? `${sup.legendary || 0} Legendary · ${sup.epic || 0} Epic · ${sup.rare || 0} Rare` : 'None funded'),
+        el('dt', {}, 'Raffle date'), el('dd', {}, k.live && k.raffleDate ? new Date(k.raffleDate).toLocaleDateString() : 'Not scheduled')),
+      el('p', { class: 'note' }, k.live ? 'Wins are decided by the reward service using on-chain verifiable randomness, never on your device, and are sent to your connected wallet.' : 'Collector cards are not being issued yet. The treasury, the randomness provider and a legal review all have to be in place first. Shards you earn now are recorded in this save on this device only; they are not a promise of a raffle and may not carry over when seasons begin.')));
+  },
+
   binderTab(body, api) {
     const col = G.s.col, filter = api.filter || 'all';
     const cats = [['all', 'All'], ['kith', 'Kith'], ['artifact', 'Artifacts'], ['character', 'Characters'], ['seasonal', 'Seasonal'], ['mythic', 'Mythic'], ['secret', 'Secret'], ['owned', 'Owned'], ['dupes', 'Spare copies']];
+    body.append(el('p', { class: 'note', style: { marginBottom: '10px' } }, 'These are binder cards: free, earned by playing. Real collector CRYPT cards are separate and can be won at very low odds from boss Collector Crates. See the Collector cards tab.'));
     body.append(el('div', { class: 'tabs' }, ...cats.map(([id, label]) => el('button', { class: filter === id ? 'on' : '', 'data-f': id, onclick: () => { api.filter = id; api.focusSel = `[data-f="${id}"]`; api.redraw(); } }, label))));
     const spare = Object.entries(col.cards).reduce((a, [id, e]) => a + (CARDS[id].rarity === 'secret' ? 0 : Math.max(0, e.n - 1) * RARITY[CARDS[id].rarity].dust), 0);
     body.append(el('div', { class: 'btnrow', style: { marginBottom: '12px' } }, el('button', { class: 'btn alt', disabled: !spare, onclick: () => { const g = refineAll(col); sfx('coin'); toast(`Refined spare copies into ${g} Dust.`); api.redraw(); } }, `Refine all spare copies (+${spare} Dust)`)));
@@ -218,8 +271,8 @@ export const Crypt = {
   logTab(body) {
     const log = G.s.col.log;
     if (!log.length) body.append(el('p', { class: 'note' }, 'No crates opened yet.'));
-    for (const e of log) body.append(el('div', { class: 'card-box' }, el('h3', {}, `${CRATES[e.crate].name} · ${new Date(e.t).toLocaleString()}`),
-      el('div', {}, e.cards.map((c) => { const id = c.replace('*', ''); return CARDS[id].name + (c.endsWith('*') ? ' ✦' : ''); }).join(', ')),
+    for (const e of log) body.append(el('div', { class: 'card-box' }, el('h3', {}, `${(CRATES[e.crate] || COLLECTOR).name} · ${new Date(e.t).toLocaleString()}`),
+      el('div', {}, e.crate === 'collector' ? `+${e.shards} Crypt Shards` : e.cards.map((c) => { const id = c.replace('*', ''); return CARDS[id].name + (c.endsWith('*') ? ' ✦' : ''); }).join(', ')),
       el('div', { class: 'note' }, `seed ${e.seed} · Fortune +${pct(e.fortune, 0)}`)));
   },
 };

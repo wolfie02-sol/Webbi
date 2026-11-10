@@ -117,6 +117,7 @@ for (const [map, ch, f] of beats) {
   check(await flag(f), `${map}: ${f}`);
 }
 check(await flag('presspass') && await flag('cryptkey'), 'key items granted by Wardens');
+check(await p.evaluate(() => __cw.s.crates.collector >= 8), 'bosses award Collector Crates');
 check(await p.evaluate(() => __cw.s.badges === 4 && __cw.s.box.some((m) => m.id === 'mindle')), 'four Sigils; freed Mindle sent to the Lantern Box');
 await shot('03-crypt');
 // gates open
@@ -151,9 +152,30 @@ check(await p.evaluate(() => __cw.s.dug === 1 && __cw.world.caches.length === 1)
 const saved = await p.evaluate(async () => { const { loadGame } = await import('./js/systems/state.js'); __cw.save(); const s = loadGame(); return s && s.flags.champion && s.party.length === 6; });
 check(saved, 'save round-trips through localStorage');
 
+log('Economy');
+await p.evaluate(() => { __cw.s.coins = 20000; __cw.world.run(() => __cw.menus.shop()); }); await p.waitForTimeout(250);
+await p.evaluate(() => document.querySelector('[data-tab="bank"]').click()); await p.waitForTimeout(150);
+await p.evaluate(() => document.querySelector('[data-dep="10000"]').click()); await p.waitForTimeout(150);
+check(await p.evaluate(() => __cw.s.bank.coins === 10000 && __cw.s.coins === 10000), 'bank deposit');
+await shot('14-bank');
+await p.evaluate(() => document.querySelector('[data-tab="bazaar"]').click()); await p.waitForTimeout(150);
+await p.evaluate(() => document.querySelector('[data-offer="2"]').click()); await p.waitForTimeout(150);
+check(await p.evaluate(() => __cw.s.col.dust >= 100 && __cw.s.coins === 8500), 'bazaar purchase');
+await shot('15-bazaar');
+await p.evaluate(() => document.querySelector('#panels .panel .x').click()); await p.waitForTimeout(200);
+check(await p.evaluate(() => /10,000|8,500/.test(document.querySelector('#hud').textContent)), 'coin balance shown on the world HUD');
+
 log('CRYPT');
 await p.evaluate(() => { __cw.s.crates = { basic: 1, silver: 1, golden: 1, shadow: 1, legendary: 1, mythic: 1 }; __cw.world.run(() => __cw.crypt.open()); });
 await p.waitForTimeout(300); await shot('04-crypt-crates');
+await p.evaluate(() => { __cw.s.crates.collector = 1; document.querySelector('[data-tab="collector"]').click(); }); await p.waitForTimeout(200); await shot('16-collector-tab');
+check(await p.evaluate(() => /No season is live/.test(document.body.textContent) && /not a promise of a raffle/.test(document.body.textContent)), 'Collector tab states that no season is live');
+await p.evaluate(() => document.querySelector('[data-tab="crates"]').click()); await p.waitForTimeout(150);
+await p.evaluate(() => document.querySelector('[data-open="collector"]').click()); await p.waitForTimeout(150);
+await p.evaluate(() => document.querySelector('.crate3d').click()); await p.waitForTimeout(3600); await shot('17-collector-open');
+check(await p.evaluate(() => __cw.s.col.shards >= 1 && /shards only/.test(document.querySelector('.shardwin').textContent)), 'Collector Crate gives shards and says card drops are not live');
+await p.evaluate(() => document.querySelector('.opening .btn').click()); await p.waitForTimeout(150);
+await p.evaluate(() => { delete __cw.s.crates.collector; });
 for (const id of ['basic', 'silver', 'golden', 'shadow', 'legendary', 'mythic']) {
   await p.evaluate((id) => document.querySelector(`[data-open="${id}"]`).click(), id); await p.waitForTimeout(150);
   await p.evaluate(() => document.querySelector('.crate3d').click()); await p.waitForTimeout(4300);

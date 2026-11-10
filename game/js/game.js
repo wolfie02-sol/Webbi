@@ -6,7 +6,7 @@ import { SPRITES } from './data/sprites.js';
 import { toCanvas, shiftPalette } from './render/pixel.js';
 
 export const G = {
-  s: null, rng, scene: 'title', world: null, config: { events: [], announcements: [], crates: {}, rewards: { paused: true }, solana: {} },
+  s: null, rng, scene: 'title', world: null, config: { events: [], announcements: [], crates: {}, collector: { live: false, instantOdds: 0, supply: {} }, rewards: { paused: true }, solana: {} },
   save() { if (this.s) saveGame(this.s); },
   eventBonus(now = Date.now()) {
     let b = 0;

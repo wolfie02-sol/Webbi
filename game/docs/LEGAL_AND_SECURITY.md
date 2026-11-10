@@ -17,6 +17,8 @@ What this means for CRYPT:
 | Free crates with standard cards (no monetary value, not transferable) | Ordinary game mechanic. Implemented. |
 | Buying crates with real money or tokens where contents have monetary value | **Do not build without counsel.** Likely a lottery/gaming product. |
 | Requiring token ownership to enter draws | Token purchase may count as consideration. Avoid; entry must be free. |
+| Boss Collector Crates: free instant-win chance + shard raffle for valuable cards | A promotional contest by chance. Entry is free (earned by play), which avoids the consideration problem, but it still needs published rules, prize counts and odds disclosure, a skill-testing question before a prize is awarded, and counsel sign-off. Coins must never buy entries. |
+| An in-game currency (coins, bank interest) | Fine while it stays closed: not purchasable, not redeemable, not transferable. Linking coins to the token or to cash in either direction changes the analysis (payments, securities, gaming) and needs advice first. |
 | Free, achievement-based on-chain rewards | Lowest risk form of valuable reward; skill-based criteria are preferable to random draws. |
 | Random draws for valuable prizes among free entrants | A promotional contest: needs published rules, odds, no purchase necessary, skill-testing question. |
 
