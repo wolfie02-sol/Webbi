@@ -118,18 +118,37 @@ function build(lang, page) {
     seo = "<!-- set siteUrl in site.config.json to add canonical and hreflang links -->";
   }
   if (page.id === "home") {
-    seo += `\n<script type="application/ld+json">${JSON.stringify({
+    const abs = (p) => (SITE_URL ? SITE_URL + p : undefined);
+    const data = {
       "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      name: "Webbi",
-      description: t("meta.desc"),
-      url: SITE_URL ? absUrl(lang, page) : undefined,
-      email: "webbicontacts@gmail.com",
-      telephone: ["+1-514-559-1276", "+1-514-808-5966"],
-      areaServed: "Montréal, QC",
-      address: { "@type": "PostalAddress", addressLocality: "Montréal", addressRegion: "QC", addressCountry: "CA" },
-      priceRange: "$200–$948",
-    })}</script>`;
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": abs("/#website"),
+          name: "Webbi",
+          alternateName: ["Webbi Studio", "Webbi Montréal"],
+          url: abs("/"),
+          inLanguage: ["fr-CA", "en-CA"],
+        },
+        {
+          "@type": "ProfessionalService",
+          "@id": abs("/#business"),
+          name: "Webbi",
+          alternateName: "Webbi Studio",
+          description: t("meta.desc"),
+          url: abs(pathFor(lang, page)),
+          logo: abs("/assets/logo-square.png"),
+          image: abs("/assets/og-" + lang + ".png"),
+          email: "webbicontacts@gmail.com",
+          telephone: ["+1-514-559-1276", "+1-514-808-5966"],
+          areaServed: { "@type": "City", name: "Montréal" },
+          address: { "@type": "PostalAddress", addressLocality: "Montréal", addressRegion: "QC", addressCountry: "CA" },
+          knowsLanguage: ["fr", "en"],
+          priceRange: "$200–$948",
+        },
+      ],
+    };
+    seo += `\n<script type="application/ld+json">${JSON.stringify(data)}</script>`;
   }
 
   const vars = {
@@ -174,6 +193,10 @@ write("index.html", `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Webbi · Conception Web à Montréal</title>
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="${esc(DICT.fr["meta.desc"])}">
 ${SITE_URL ? `<link rel="canonical" href="${absUrl(DEFAULT_LANG, PAGES[0])}">\n` : ""}<link rel="alternate" hreflang="fr" href="${rootTarget("fr")}">

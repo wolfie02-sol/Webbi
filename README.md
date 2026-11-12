@@ -74,7 +74,7 @@ Then open http://localhost:8000.
 
 ### Hostinger
 
-Upload `index.html`, `404.html`, `contact.php`, `.htaccess`, `robots.txt` (and `sitemap.xml` if present), and the folders
+Upload `index.html`, `404.html`, `contact.php`, `.htaccess`, `robots.txt`, `favicon.ico`, `site.webmanifest` (and `sitemap.xml` if present), and the folders
 `fr/`, `en/`, `css/`, `js/`, `assets/` and `demos/` into `public_html` (hPanel → File Manager), with `index.html` directly inside `public_html`. Then install the free SSL certificate (hPanel → Security → SSL).
 `.htaccess` forces HTTPS, compresses files, sets browser caching and adds basic security headers.
 
