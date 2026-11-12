@@ -61,7 +61,7 @@
           <a class="btn btn-ghost" href="{{url:pricing}}">{{cta.packages}}</a>
         </div>
         <dl class="hero-facts">
-          <div><dt>{{fact.from}}</dt><dd>{{price:300}}</dd></div>
+          <div><dt>{{fact.from}}</dt><dd>{{price:200}}</dd></div>
           <div><dt>{{fact.live}}</dt><dd>{{fact.days}}</dd></div>
           <div><dt>{{fact.call}}</dt><dd>{{fact.min}}</dd></div>
         </dl>
@@ -264,6 +264,23 @@
       </div>
 
       <div class="plans">
+        <article class="plan" id="plan-basic">
+          <h2>{{pkg.basic}}</h2>
+          <p class="plan-desc">{{plan.b.d}}</p>
+          <p class="plan-price"><span class="amt">{{price:200}}</span></p>
+          <p class="plan-then" data-setup="200" data-min="10" data-max="10">{{then}} {{price:10}} {{permonth}}</p>
+          <ul class="ticks">
+            <li>{{f.design}}</li>
+            <li>{{f.mobile}}</li>
+            <li>{{f.seo}}</li>
+            <li>{{f.form}}</li>
+            <li>{{f.revInf}}</li>
+            <li>{{f.week}}</li>
+            <li class="tick-note">{{f.changes}}</li>
+          </ul>
+          <a class="btn btn-ghost" href="{{url:contact}}?plan=basic">{{plan.chooseB}}</a>
+        </article>
+
         <article class="plan" id="plan-starter">
           <h2>{{pkg.starter}}</h2>
           <p class="plan-desc">{{plan.s.d}}</p>
@@ -274,8 +291,9 @@
             <li>{{f.mobile}}</li>
             <li>{{f.seo}}</li>
             <li>{{f.form}}</li>
-            <li>{{f.rev2}}</li>
+            <li>{{f.revInf}}</li>
             <li>{{f.week}}</li>
+            <li class="tick-key">{{f.backendInc}}</li>
           </ul>
           <a class="btn btn-ghost" href="{{url:contact}}?plan=starter">{{plan.choose}}</a>
         </article>
@@ -290,8 +308,9 @@
             <li>{{f.allStarter}}</li>
             <li>{{f.seoAdv}}</li>
             <li>{{f.booking}}</li>
-            <li>{{f.rev3}}</li>
+            <li>{{f.revInf}}</li>
             <li>{{f.week}}</li>
+            <li class="tick-key">{{f.backendInc}}</li>
           </ul>
           <a class="btn btn-light" href="{{url:contact}}?plan=growth">{{plan.chooseG}}</a>
         </article>
@@ -308,6 +327,7 @@
             <li>{{f.custom}}</li>
             <li>{{f.revInf}}</li>
             <li>{{f.week}}</li>
+            <li class="tick-key">{{f.backendInc}}</li>
           </ul>
           <a class="btn btn-ghost" href="{{url:contact}}?plan=premium">{{plan.chooseP}}</a>
         </article>
@@ -321,6 +341,10 @@
         <div>
           <h3>{{note.week.t}}</h3>
           <p>{{note.week.d}}</p>
+        </div>
+        <div>
+          <h3>{{note.rev.t}}</h3>
+          <p>{{note.rev.d}}</p>
         </div>
         <div class="custom-quote">
           <h3>{{note.custom.t}}</h3>
@@ -359,6 +383,10 @@
           </div>
           <div class="quiz-q" data-q="seo" hidden>
             <p class="quiz-question">{{quiz.q4}}</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">{{quiz.yes}}</button><button type="button" class="btn btn-outline-light" data-a="no">{{quiz.no}}</button></div>
+          </div>
+          <div class="quiz-q" data-q="edit" hidden>
+            <p class="quiz-question">{{quiz.q5}}</p>
             <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">{{quiz.yes}}</button><button type="button" class="btn btn-outline-light" data-a="no">{{quiz.no}}</button></div>
           </div>
           <div class="quiz-result" id="quiz-result" hidden aria-live="polite">
@@ -402,6 +430,10 @@
         <details>
           <summary>{{faq.4.q}}</summary>
           <p>{{faq.4.a}}</p>
+        </details>
+        <details>
+          <summary>{{faq.5.q}}</summary>
+          <p>{{faq.5.a}}</p>
         </details>
       </div>
     </div>
@@ -507,6 +539,7 @@
         <div class="field">
           <label for="f-plan">{{form.plan}}</label>
           <select id="f-plan" name="plan">
+            <option value="basic">{{opt.basic}}</option>
             <option value="starter">{{opt.starter}}</option>
             <option value="growth" selected>{{opt.growth}}</option>
             <option value="premium">{{opt.premium}}</option>

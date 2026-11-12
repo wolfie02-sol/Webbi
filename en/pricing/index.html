@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pricing · Webbi · Montreal web design</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Simple website packages from $300 + $40/month. No hidden fees, live in under a week, prices in CAD. Answers to common questions.">
+<meta name="description" content="Simple website packages from $200 + $10/month. No hidden fees, live in under a week, prices in CAD. Answers to common questions.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Webbi">
 <meta property="og:title" content="Pricing · Webbi · Montreal web design">
-<meta property="og:description" content="Simple website packages from $300 + $40/month. No hidden fees, live in under a week, prices in CAD. Answers to common questions.">
+<meta property="og:description" content="Simple website packages from $200 + $10/month. No hidden fees, live in under a week, prices in CAD. Answers to common questions.">
 <meta property="og:locale" content="en_CA">
 <!-- set siteUrl in site.config.json to add canonical and hreflang links -->
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
@@ -18,7 +18,7 @@
 <meta name="theme-color" content="#612bfd">
 <link rel="preload" href="../../assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../css/styles.css?v=12248bce">
+<link rel="stylesheet" href="../../css/styles.css?v=c15fd8e4">
 <script>try{var w=localStorage.getItem("webbi-theme");if(w==="dark"||w==="light")document.documentElement.setAttribute("data-theme",w)}catch(e){}</script>
 </head>
 <body data-page="pricing">
@@ -73,9 +73,26 @@
       </div>
 
       <div class="plans">
+        <article class="plan" id="plan-basic">
+          <h2>Basic</h2>
+          <p class="plan-desc">The lowest cost to get online. We make your changes after launch, billed per request.</p>
+          <p class="plan-price"><span class="amt">$200</span></p>
+          <p class="plan-then" data-setup="200" data-min="10" data-max="10">then $10 / month</p>
+          <ul class="ticks">
+            <li>Custom design</li>
+            <li>Mobile &amp; desktop versions</li>
+            <li>Basic SEO setup</li>
+            <li>Contact form</li>
+            <li>Unlimited revisions</li>
+            <li>Live in under a week</li>
+            <li class="tick-note">Changes after launch billed per request</li>
+          </ul>
+          <a class="btn btn-ghost" href="../contact/?plan=basic">Choose Basic</a>
+        </article>
+
         <article class="plan" id="plan-starter">
           <h2>Starter</h2>
-          <p class="plan-desc">A sharp, professional website for new businesses.</p>
+          <p class="plan-desc">A sharp, professional website with a back end to update your content yourself.</p>
           <p class="plan-price"><span class="amt">$300</span></p>
           <p class="plan-then" data-setup="300" data-min="40" data-max="40">then $40 / month</p>
           <ul class="ticks">
@@ -83,8 +100,9 @@
             <li>Mobile &amp; desktop versions</li>
             <li>Basic SEO setup</li>
             <li>Contact form</li>
-            <li>2 revision rounds</li>
+            <li>Unlimited revisions</li>
             <li>Live in under a week</li>
+            <li class="tick-key">Back end to update your content</li>
           </ul>
           <a class="btn btn-ghost" href="../contact/?plan=starter">Choose Starter</a>
         </article>
@@ -99,8 +117,9 @@
             <li>Everything in Starter</li>
             <li>Advanced SEO</li>
             <li>Booking &amp; quote requests</li>
-            <li>3 revision rounds</li>
+            <li>Unlimited revisions</li>
             <li>Live in under a week</li>
+            <li class="tick-key">Back end to update your content</li>
           </ul>
           <a class="btn btn-light" href="../contact/?plan=growth">Choose Growth</a>
         </article>
@@ -117,6 +136,7 @@
             <li>Custom features</li>
             <li>Unlimited revisions</li>
             <li>Live in under a week</li>
+            <li class="tick-key">Back end to update your content</li>
           </ul>
           <a class="btn btn-ghost" href="../contact/?plan=premium">Choose Premium</a>
         </article>
@@ -130,6 +150,10 @@
         <div>
           <h3>Live in under a week</h3>
           <p>Every package is designed, built and launched in less than seven days.</p>
+        </div>
+        <div>
+          <h3>Unlimited revisions in every package</h3>
+          <p>We adjust the design until you're happy with it, before your site goes live.</p>
         </div>
         <div class="custom-quote">
           <h3>Something specific in mind?</h3>
@@ -147,7 +171,7 @@
         <div class="quiz-intro">
           <p class="kicker on-brand">Not sure?</p>
           <h2 class="h2">Which package is right for you?</h2>
-          <p>Answer 4 quick questions and we'll recommend one.</p>
+          <p>Answer 5 quick questions and we'll recommend one.</p>
         </div>
         <div class="quiz-panel">
           <div class="quiz-top">
@@ -168,6 +192,10 @@
           </div>
           <div class="quiz-q" data-q="seo" hidden>
             <p class="quiz-question">Is showing up on Google a top priority?</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">Yes</button><button type="button" class="btn btn-outline-light" data-a="no">No</button></div>
+          </div>
+          <div class="quiz-q" data-q="edit" hidden>
+            <p class="quiz-question">Do you want to update your site's text and photos yourself?</p>
             <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">Yes</button><button type="button" class="btn btn-outline-light" data-a="no">No</button></div>
           </div>
           <div class="quiz-result" id="quiz-result" hidden aria-live="polite">
@@ -212,6 +240,10 @@
           <summary>What does the monthly fee cover?</summary>
           <p>Hosting, security updates, backups and ongoing support, so your site stays fast and safe.</p>
         </details>
+        <details>
+          <summary>Can I update my site myself?</summary>
+          <p>Yes, with Starter, Growth and Premium: they include a back end where you can change your text and photos, and we show you how it works at launch. With Basic, send us your changes and we make them for you, billed per request.</p>
+        </details>
       </div>
     </div>
   </section>
@@ -252,7 +284,7 @@
   </div>
 </footer>
 
-<script src="../../js/i18n.js?v=12248bce"></script>
-<script src="../../js/main.js?v=12248bce"></script>
+<script src="../../js/i18n.js?v=c15fd8e4"></script>
+<script src="../../js/main.js?v=c15fd8e4"></script>
 </body>
 </html>

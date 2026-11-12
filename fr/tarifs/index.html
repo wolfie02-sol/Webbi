@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tarifs · Webbi · Conception Web à Montréal</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Des forfaits de site Web simples à partir de 300 $ + 40 $/mois. Aucuns frais cachés, en ligne en moins d'une semaine, prix en dollars canadiens. Réponses aux questions fréquentes.">
+<meta name="description" content="Des forfaits de site Web simples à partir de 200 $ + 10 $/mois. Aucuns frais cachés, en ligne en moins d'une semaine, prix en dollars canadiens. Réponses aux questions fréquentes.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Webbi">
 <meta property="og:title" content="Tarifs · Webbi · Conception Web à Montréal">
-<meta property="og:description" content="Des forfaits de site Web simples à partir de 300 $ + 40 $/mois. Aucuns frais cachés, en ligne en moins d'une semaine, prix en dollars canadiens. Réponses aux questions fréquentes.">
+<meta property="og:description" content="Des forfaits de site Web simples à partir de 200 $ + 10 $/mois. Aucuns frais cachés, en ligne en moins d'une semaine, prix en dollars canadiens. Réponses aux questions fréquentes.">
 <meta property="og:locale" content="fr_CA">
 <!-- set siteUrl in site.config.json to add canonical and hreflang links -->
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
@@ -18,7 +18,7 @@
 <meta name="theme-color" content="#612bfd">
 <link rel="preload" href="../../assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../css/styles.css?v=12248bce">
+<link rel="stylesheet" href="../../css/styles.css?v=c15fd8e4">
 <script>try{var w=localStorage.getItem("webbi-theme");if(w==="dark"||w==="light")document.documentElement.setAttribute("data-theme",w)}catch(e){}</script>
 </head>
 <body data-page="pricing">
@@ -73,9 +73,26 @@
       </div>
 
       <div class="plans">
+        <article class="plan" id="plan-basic">
+          <h2>Base</h2>
+          <p class="plan-desc">Le plus économique. Nous faisons vos modifications après la mise en ligne, facturées à la demande.</p>
+          <p class="plan-price"><span class="amt">200 $</span></p>
+          <p class="plan-then" data-setup="200" data-min="10" data-max="10">puis 10 $ / mois</p>
+          <ul class="ticks">
+            <li>Design sur mesure</li>
+            <li>Versions mobile et ordinateur</li>
+            <li>Référencement de base</li>
+            <li>Formulaire de contact</li>
+            <li>Révisions illimitées</li>
+            <li>En ligne en moins d'une semaine</li>
+            <li class="tick-note">Modifications après la mise en ligne facturées à la demande</li>
+          </ul>
+          <a class="btn btn-ghost" href="../contact/?plan=basic">Choisir Base</a>
+        </article>
+
         <article class="plan" id="plan-starter">
           <h2>Essentiel</h2>
-          <p class="plan-desc">Un site professionnel et soigné pour les nouvelles entreprises.</p>
+          <p class="plan-desc">Un site professionnel et soigné, avec une interface pour modifier votre contenu vous-même.</p>
           <p class="plan-price"><span class="amt">300 $</span></p>
           <p class="plan-then" data-setup="300" data-min="40" data-max="40">puis 40 $ / mois</p>
           <ul class="ticks">
@@ -83,8 +100,9 @@
             <li>Versions mobile et ordinateur</li>
             <li>Référencement de base</li>
             <li>Formulaire de contact</li>
-            <li>2 séries de révisions</li>
+            <li>Révisions illimitées</li>
             <li>En ligne en moins d'une semaine</li>
+            <li class="tick-key">Interface pour modifier votre contenu</li>
           </ul>
           <a class="btn btn-ghost" href="../contact/?plan=starter">Choisir Essentiel</a>
         </article>
@@ -99,8 +117,9 @@
             <li>Tout le forfait Essentiel</li>
             <li>Référencement avancé</li>
             <li>Réservations et soumissions</li>
-            <li>3 séries de révisions</li>
+            <li>Révisions illimitées</li>
             <li>En ligne en moins d'une semaine</li>
+            <li class="tick-key">Interface pour modifier votre contenu</li>
           </ul>
           <a class="btn btn-light" href="../contact/?plan=growth">Choisir Croissance</a>
         </article>
@@ -117,6 +136,7 @@
             <li>Fonctions sur mesure</li>
             <li>Révisions illimitées</li>
             <li>En ligne en moins d'une semaine</li>
+            <li class="tick-key">Interface pour modifier votre contenu</li>
           </ul>
           <a class="btn btn-ghost" href="../contact/?plan=premium">Choisir Premium</a>
         </article>
@@ -130,6 +150,10 @@
         <div>
           <h3>En ligne en moins d'une semaine</h3>
           <p>Chaque forfait est conçu, réalisé et lancé en moins de sept jours.</p>
+        </div>
+        <div>
+          <h3>Révisions illimitées dans tous les forfaits</h3>
+          <p>Nous ajustons le design jusqu'à ce qu'il vous plaise, avant la mise en ligne.</p>
         </div>
         <div class="custom-quote">
           <h3>Un besoin particulier ?</h3>
@@ -147,7 +171,7 @@
         <div class="quiz-intro">
           <p class="kicker on-brand">Pas certain ?</p>
           <h2 class="h2">Quel forfait vous convient ?</h2>
-          <p>Répondez à 4 questions rapides et nous vous en recommanderons un.</p>
+          <p>Répondez à 5 questions rapides et nous vous en recommanderons un.</p>
         </div>
         <div class="quiz-panel">
           <div class="quiz-top">
@@ -168,6 +192,10 @@
           </div>
           <div class="quiz-q" data-q="seo" hidden>
             <p class="quiz-question">Être trouvé sur Google est-il une priorité ?</p>
+            <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">Oui</button><button type="button" class="btn btn-outline-light" data-a="no">Non</button></div>
+          </div>
+          <div class="quiz-q" data-q="edit" hidden>
+            <p class="quiz-question">Voulez-vous modifier vous-même les textes et les photos de votre site ?</p>
             <div class="quiz-opts"><button type="button" class="btn btn-light" data-a="yes">Oui</button><button type="button" class="btn btn-outline-light" data-a="no">Non</button></div>
           </div>
           <div class="quiz-result" id="quiz-result" hidden aria-live="polite">
@@ -212,6 +240,10 @@
           <summary>Que comprennent les frais mensuels ?</summary>
           <p>Hébergement, mises à jour de sécurité, sauvegardes et soutien continu, pour un site rapide et sûr.</p>
         </details>
+        <details>
+          <summary>Puis-je modifier mon site moi-même ?</summary>
+          <p>Oui, avec les forfaits Essentiel, Croissance et Premium : ils comprennent une interface de gestion pour changer vos textes et vos photos, et nous vous montrons comment l'utiliser au lancement. Avec le forfait Base, envoyez-nous vos changements et nous les faisons pour vous, facturés à la demande.</p>
+        </details>
       </div>
     </div>
   </section>
@@ -252,7 +284,7 @@
   </div>
 </footer>
 
-<script src="../../js/i18n.js?v=12248bce"></script>
-<script src="../../js/main.js?v=12248bce"></script>
+<script src="../../js/i18n.js?v=c15fd8e4"></script>
+<script src="../../js/main.js?v=c15fd8e4"></script>
 </body>
 </html>

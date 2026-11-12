@@ -278,6 +278,7 @@
     var back = document.getElementById("quiz-back"), restart = document.getElementById("quiz-restart");
     var answers = {}, at = 0;
     var PLANS = {
+      basic: { name: t("pkg.basic"), setup: 200, min: 10, max: 10 },
       starter: { name: t("pkg.starter"), setup: 300, min: 40, max: 40 },
       growth: { name: t("pkg.growth"), setup: 500, min: 60, max: 60 },
       premium: { name: "Premium", setup: 948, min: 120, max: 180 }
@@ -286,7 +287,7 @@
     function pick() {
       if (answers.sell === "yes" || answers.custom === "yes") return "premium";
       if (answers.booking === "yes" || answers.seo === "yes") return "growth";
-      return "starter";
+      return answers.edit === "yes" ? "starter" : "basic";
     }
 
     function show(i) {

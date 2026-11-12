@@ -73,6 +73,7 @@ $hits[] = $now;
 @file_put_contents($rateFile, implode(',', $hits), LOCK_EX);
 
 $plans = [
+    'basic'   => 'Base / Basic',
     'starter' => 'Essentiel / Starter',
     'growth'  => 'Croissance / Growth',
     'premium' => 'Premium',

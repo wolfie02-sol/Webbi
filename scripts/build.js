@@ -128,7 +128,7 @@ function build(lang, page) {
       telephone: ["+1-514-559-1276", "+1-514-808-5966"],
       areaServed: "Montréal, QC",
       address: { "@type": "PostalAddress", addressLocality: "Montréal", addressRegion: "QC", addressCountry: "CA" },
-      priceRange: "$300–$948",
+      priceRange: "$200–$948",
     })}</script>`;
   }
 
