@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://webbiweb.com/fr/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/fr/services/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/services/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/services/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/en/services/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/services/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/services/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/fr/tarifs/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/tarifs/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/pricing/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/en/pricing/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/tarifs/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/pricing/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/fr/a-propos/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/a-propos/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/about/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/en/about/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/a-propos/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/about/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/fr/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/contact/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/contact/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/en/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/contact/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/contact/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/fr/confidentialite/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/confidentialite/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/privacy/"/>
+  </url>
+  <url>
+    <loc>https://webbiweb.com/en/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://webbiweb.com/fr/confidentialite/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://webbiweb.com/en/privacy/"/>
+  </url>
+</urlset>

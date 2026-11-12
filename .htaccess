@@ -6,9 +6,9 @@ RewriteCond %{HTTPS} off
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Optional: send www.yourdomain.ca to yourdomain.ca (remove the # on the 2 lines below to enable)
-# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-# RewriteRule ^(.*)$ https://%1%{REQUEST_URI} [L,R=301]
+# One address for Google: www.webbiweb.com goes to webbiweb.com
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1%{REQUEST_URI} [L,R=301]
 
 DirectoryIndex index.html
 
