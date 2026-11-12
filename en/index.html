@@ -17,10 +17,9 @@
 <link rel="icon" href="../assets/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <meta name="theme-color" content="#612bfd">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="../css/styles.css?v=62a826a1">
+<link rel="preload" href="../assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../css/styles.css?v=12248bce">
 <script>try{var w=localStorage.getItem("webbi-theme");if(w==="dark"||w==="light")document.documentElement.setAttribute("data-theme",w)}catch(e){}</script>
 </head>
 <body data-page="home">
@@ -150,8 +149,19 @@
       <div class="hub-head">
         <p class="kicker">Examples</p>
         <h2 class="h2">See what we can build.</h2>
-        <p class="sub">Three simple example websites for fictional Montreal businesses. Your own site is designed around your brand and your needs.</p>
+        <p class="sub">A site we built for a client, plus three simple examples. Your own site is designed around your brand and your needs.</p>
       </div>
+      <a class="work-card" href="https://www.lauracarinaazcue.com" target="_blank" rel="noopener">
+        <img src="../assets/demos/laura-carina-azcue-en.jpg" alt="Home page of lauracarinaazcue.com, with a painting of a sailboat in a storm" width="960" height="600" loading="lazy">
+        <div class="work-body">
+          <span class="demo-badge work-badge">Client project</span>
+          <h3>Laura Carina Azcue</h3>
+          <p>An online gallery for a painter: a virtual museum visitors walk through, with her full collection of storms, water landscapes and color studies.</p>
+          <ul class="work-tags"><li>Virtual museum</li><li>Art collection</li><li>English and French</li></ul>
+          <span class="hub-go">Visit the site <span class="sr-only">(opens in a new tab)</span><span aria-hidden="true">↗</span></span>
+        </div>
+      </a>
+      <p class="demo-sep">Simple examples · fictional businesses</p>
       <div class="demo-grid">
         <a class="demo-card" href="../demos/plomberie-boreal/index.html">
           <img src="../assets/demos/plomberie-boreal.jpg" alt="" width="640" height="400" loading="lazy">
@@ -216,7 +226,7 @@
   </div>
 </footer>
 
-<script src="../js/i18n.js?v=62a826a1"></script>
-<script src="../js/main.js?v=62a826a1"></script>
+<script src="../js/i18n.js?v=12248bce"></script>
+<script src="../js/main.js?v=12248bce"></script>
 </body>
 </html>

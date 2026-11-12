@@ -26,7 +26,9 @@ Files you edit:
 - `js/main.js`: price view (monthly / first-year total), build animation, swipe between pages on phones, contact form
 - `site.config.json`: your website address (`siteUrl`, for example `"https://webbi.ca"`) and default language
 - `contact.php`: emails contact form requests to webbicontacts@gmail.com (spam trap and rate limit included)
+- Client projects shown on the home page: the Laura Carina Azcue card is in `src/template.html` (text in `js/i18n.js`, keys starting with `work.`)
 - `demos/`: three simple example sites for fictional businesses, shown on the home page (plain HTML, edit directly)
+- `assets/fonts/`: the site fonts, hosted with the site (no Google Fonts requests)
 - `assets/`: logos, browser icons (`favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`), share images
   (`og-fr.png`, `og-en.png`) and example site thumbnails (`assets/demos/`)
 

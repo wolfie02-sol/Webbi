@@ -17,10 +17,9 @@
 <link rel="icon" href="../assets/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <meta name="theme-color" content="#612bfd">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="../css/styles.css?v=62a826a1">
+<link rel="preload" href="../assets/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../css/styles.css?v=12248bce">
 <script>try{var w=localStorage.getItem("webbi-theme");if(w==="dark"||w==="light")document.documentElement.setAttribute("data-theme",w)}catch(e){}</script>
 </head>
 <body data-page="home">
@@ -150,8 +149,19 @@
       <div class="hub-head">
         <p class="kicker">Exemples</p>
         <h2 class="h2">Voyez ce que nous pouvons créer.</h2>
-        <p class="sub">Trois exemples simples de sites pour des entreprises montréalaises fictives. Votre site est conçu selon votre image et vos besoins.</p>
+        <p class="sub">Un site que nous avons réalisé pour une cliente, et trois exemples simples. Votre site est conçu selon votre image et vos besoins.</p>
       </div>
+      <a class="work-card" href="https://www.lauracarinaazcue.com" target="_blank" rel="noopener">
+        <img src="../assets/demos/laura-carina-azcue-fr.jpg" alt="Page d'accueil de lauracarinaazcue.com, avec un tableau d'un voilier dans la tempête" width="960" height="600" loading="lazy">
+        <div class="work-body">
+          <span class="demo-badge work-badge">Projet client</span>
+          <h3>Laura Carina Azcue</h3>
+          <p>Une galerie en ligne pour une artiste peintre : un musée virtuel que l'on parcourt, avec toute sa collection de tempêtes, de paysages d'eau et d'études de couleurs.</p>
+          <ul class="work-tags"><li>Musée virtuel</li><li>Collection d'œuvres</li><li>Français et anglais</li></ul>
+          <span class="hub-go">Visiter le site <span class="sr-only">(s'ouvre dans un nouvel onglet)</span><span aria-hidden="true">↗</span></span>
+        </div>
+      </a>
+      <p class="demo-sep">Exemples simples · entreprises fictives</p>
       <div class="demo-grid">
         <a class="demo-card" href="../demos/plomberie-boreal/index.html">
           <img src="../assets/demos/plomberie-boreal.jpg" alt="" width="640" height="400" loading="lazy">
@@ -216,7 +226,7 @@
   </div>
 </footer>
 
-<script src="../js/i18n.js?v=62a826a1"></script>
-<script src="../js/main.js?v=62a826a1"></script>
+<script src="../js/i18n.js?v=12248bce"></script>
+<script src="../js/main.js?v=12248bce"></script>
 </body>
 </html>

@@ -75,13 +75,26 @@
       stateEl.textContent = day >= 7 || day === 0 ? t("ticker.live") : t("ticker.day") + " " + day;
     }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { day = 7; render(); return; }
+
+    // run only while the hero is on screen and the tab is visible
+    var hero = document.querySelector(".hero"), onScreen = true, timer = null;
+    function active() { return onScreen && !document.hidden; }
+    function schedule(fn, ms) { clearTimeout(timer); timer = setTimeout(function () { timer = null; if (active()) fn(); }, ms); }
     function step() {
       day++; render();
-      if (day < 7) setTimeout(step, 380);
-      else setTimeout(function () { day = 0; render(); setTimeout(step, 900); }, 4200);
+      if (day < 7) schedule(step, 380);
+      else schedule(function () { day = 0; render(); schedule(step, 900); }, 4200);
     }
+    function resume() {
+      if (hero) hero.classList.toggle("is-paused", !active());
+      if (active() && !timer) schedule(step, day >= 7 ? 1200 : 380);
+    }
+    if ("IntersectionObserver" in window && hero) {
+      new IntersectionObserver(function (entries) { onScreen = entries[0].isIntersecting; resume(); }).observe(hero);
+    }
+    document.addEventListener("visibilitychange", resume);
     render();
-    setTimeout(step, 1600);
+    schedule(step, 1600);
   }
 
   /* ---------- subtle parallax on the hero stage ---------- */
@@ -90,13 +103,23 @@
     if (!stage || window.matchMedia("(prefers-reduced-motion: reduce), (hover: none)").matches) return;
     var browser = stage.querySelector(".browser"), phone = stage.querySelector(".phone");
     stage.classList.add("is-tilting");
+    var pending = null, frame = 0;
+    // apply at most once per frame, however fast the mouse moves
     stage.addEventListener("pointermove", function (e) {
-      var r = stage.getBoundingClientRect();
-      var x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
-      browser.style.transform = "translate(" + x * -10 + "px," + y * -8 + "px)";
-      phone.style.transform = "translate(" + x * 16 + "px," + y * 12 + "px)";
+      pending = e;
+      if (frame) return;
+      frame = requestAnimationFrame(function () {
+        frame = 0;
+        var r = stage.getBoundingClientRect();
+        var x = (pending.clientX - r.left) / r.width - .5, y = (pending.clientY - r.top) / r.height - .5;
+        browser.style.transform = "translate(" + x * -10 + "px," + y * -8 + "px)";
+        phone.style.transform = "translate(" + x * 16 + "px," + y * 12 + "px)";
+      });
     });
-    stage.addEventListener("pointerleave", function () { browser.style.transform = phone.style.transform = ""; });
+    stage.addEventListener("pointerleave", function () {
+      if (frame) { cancelAnimationFrame(frame); frame = 0; }
+      browser.style.transform = phone.style.transform = "";
+    });
   }
 
   /* ---------- header ---------- */

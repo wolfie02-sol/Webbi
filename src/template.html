@@ -16,9 +16,8 @@
 <link rel="icon" href="{{asset:assets/favicon-32.png}}" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="{{asset:assets/apple-touch-icon.png}}">
 <meta name="theme-color" content="#612bfd">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="preload" href="{{asset:assets/fonts/figtree.woff2}}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{asset:assets/fonts/bricolage-grotesque.woff2}}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{asset:css/styles.css}}?v={{version}}">
 <script>try{var w=localStorage.getItem("webbi-theme");if(w==="dark"||w==="light")document.documentElement.setAttribute("data-theme",w)}catch(e){}</script>
 </head>
@@ -146,6 +145,17 @@
         <h2 class="h2">{{demo.title}}</h2>
         <p class="sub">{{demo.sub}}</p>
       </div>
+      <a class="work-card" href="https://www.lauracarinaazcue.com" target="_blank" rel="noopener">
+        <img src="{{asset:assets/demos/laura-carina-azcue-{{langcode}}.jpg}}" alt="{{work.1.alt}}" width="960" height="600" loading="lazy">
+        <div class="work-body">
+          <span class="demo-badge work-badge">{{work.badge}}</span>
+          <h3>Laura Carina Azcue</h3>
+          <p>{{work.1.d}}</p>
+          <ul class="work-tags"><li>{{work.1.t1}}</li><li>{{work.1.t2}}</li><li>{{work.1.t3}}</li></ul>
+          <span class="hub-go">{{work.visit}} <span class="sr-only">{{work.newtab}}</span><span aria-hidden="true">↗</span></span>
+        </div>
+      </a>
+      <p class="demo-sep">{{demo.simple}}</p>
       <div class="demo-grid">
         <a class="demo-card" href="{{asset:demos/plomberie-boreal/index.html}}">
           <img src="{{asset:assets/demos/plomberie-boreal.jpg}}" alt="" width="640" height="400" loading="lazy">

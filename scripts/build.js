@@ -139,6 +139,7 @@ function build(lang, page) {
   };
   const raw = { seo, nav: navLinks(MENU), footnav: navLinks(PAGES), langswitch: langSwitch, pager };
 
+  html = html.replace(/\{\{langcode\}\}/g, lang); // first, so it can sit inside other placeholders
   html = html.replace(/\{\{([^}]+)\}\}/g, (_, tok) => {
     tok = tok.trim();
     if (tok in raw) return raw[tok];
@@ -209,7 +210,6 @@ write("404.html", `<!doctype html>
 <title>404 · ${esc(DICT.fr["nf.title"])} · Webbi</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Figtree:wght@400;600&family=JetBrains+Mono:wght@600&display=swap">
 <link rel="stylesheet" href="/css/styles.css?v=${version}">
 <script>try{var w=localStorage.getItem("webbi-theme");if(w==="dark"||w==="light")document.documentElement.setAttribute("data-theme",w)}catch(e){}</script>
 </head>
